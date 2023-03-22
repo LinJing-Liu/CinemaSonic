@@ -22,6 +22,7 @@ mysql_engine = MySQLDatabaseHandler(MYSQL_USER,MYSQL_USER_PASSWORD,MYSQL_PORT,MY
 mysql_engine.load_file_into_db()
 
 app = Flask(__name__)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 CORS(app)
 
 # Sample search, the LIKE operator in this case is hard-coded, 
@@ -41,5 +42,9 @@ def home():
 def episodes_search():
     text = request.args.get("title")
     return sql_search(text)
+
+@app.route("/sample_output")
+def output():
+    return render_template('output.html',title="sample output")
 
 # app.run(debug=True)

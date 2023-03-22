@@ -1,0 +1,204 @@
+<!doctype html>
+
+<head>
+  <title>
+    Sample Output
+  </title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+  <div div="container">
+    <div id="title">Sample Output</div>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-4">
+          <div class="card">
+            <div class="card-body">
+              <div class="img-container">
+                <img class="card-img-top" id="song-img"
+                  src="https://images.genius.com/c2185c76ed178e85931899c89ae85d5b.850x850x1.jpg">
+              </div>
+              <h5 class="card-title">New Rules</h5>
+              <h5 class="card-artist">Dua Lipa</h5>
+              <h5 class="song-info">
+                <span class="genre">Pop | </span>
+                <span class="duration">3 minutes and 15 seconds</span>
+              </h5>
+              <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#song-info-collapse1"
+                aria-expanded="false" aria-controls="song-info-collapse1">
+                Song Characteristic Details
+              </button>
+              <div class="collapse song-collapse" id="song-info-collapse1">
+                <div class="card card-body">
+                  <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 76.2%;" aria-valuenow="0.762"
+                      aria-valuemin="0" aria-valuemax="1">
+                      Danceability
+                    </div>
+                  </div>
+                  <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 6.94%;" aria-valuenow="0.0694"
+                      aria-valuemin="0" aria-valuemax="1">
+                      Speechiness
+                    </div>
+                  </div>
+                  <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 0.26%;" aria-valuenow="0.0026"
+                      aria-valuemin="0" aria-valuemax="1">
+                      Acousticness
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#song-lyric-collapse1"
+                aria-expanded="false" aria-controls="song-lyric-collapse1">
+                Song Lyrics
+              </button>
+              <div class="collapse song-collapse" id="song-lyric-collapse1">
+                <div class="card card-body song-lyric">
+                  One, one, one, one, one
+                  Talkin' in my sleep at night, makin' myself crazy
+                  (Out of my mind, out of my mind)
+                  Wrote it down and read it out, hopin' it would save me
+                  (Too many times, too many times)
+                  My love
+                  He makes me feel like nobody else, nobody else
+                  But my love
+                  He doesn't love me, so I tell myself, I tell myself
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <div class="card">
+            <div class="card-body">
+              <div class="img-container">
+                <img class="card-img-top" id="song-img"
+                  src="https://t2.genius.com/unsafe/325x325/https%3A%2F%2Fimages.genius.com%2Fccc4ed75531c7d3ad9085317e9554a3a.1000x1000x1.jpg">
+              </div>
+              <h5 class="card-title">Something Like This</h5>
+              <h5 class="card-artist">Chainsmokers</h5>
+              <h5 class="song-info">
+                <span class="genre">Pop | </span>
+                <span class="duration">4 minutes and 8 seconds</span>
+              </h5>
+              <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#song-info-collapse2"
+                aria-expanded="false" aria-controls="song-info-collapse2">
+                Song Characteristic Details
+              </button>
+              <div class="collapse song-collapse" id="song-info-collapse2">
+                <div class="card card-body">
+                  <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 46.6%;" aria-valuenow="0.466"
+                      aria-valuemin="0" aria-valuemax="1">
+                      Danceability
+                    </div>
+                  </div>
+                  <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 3.84%;" aria-valuenow="0.0384"
+                      aria-valuemin="0" aria-valuemax="1">
+                      Speechiness
+                    </div>
+                  </div>
+                  <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 82.2%;" aria-valuenow="0.822"
+                      aria-valuemin="0" aria-valuemax="1">
+                      Acousticness
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#song-lyric-collapse3"
+                aria-expanded="false" aria-controls="song-lyric-collapse3">
+                Song Lyrics
+              </button>
+              <div class="collapse song-collapse" id="song-lyric-collapse3">
+                <div class="card card-body song-lyric">
+                  I've been reading books of old
+                  The legends and the myths
+                  Achilles and his gold
+                  Hercules and his gifts
+                  Spiderman's control
+                  And Batman with his fists
+                  And clearly I don't see myself upon that list
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <div class="card">
+            <div class="card-body">
+              <div class="img-container">
+                <img class="card-img-top" id="song-img"
+                  src="https://t2.genius.com/unsafe/325x325/https%3A%2F%2Fimages.genius.com%2F493f464eec6f5cf1bbe87732beadcb2b.500x500x1.jpg">
+              </div>
+              <h5 class="card-title">Firework</h5>
+              <h5 class="card-artist">Katy Perry & Kacey Musgraves</h5>
+              <h5 class="song-info">
+                <span class="genre">Pop | </span>
+                <span class="duration">3 minutes and 49 seconds</span>
+              </h5>
+              <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#song-info-collapse4"
+                aria-expanded="false" aria-controls="song-info-collapse4">
+                Song Characteristic Details
+              </button>
+              <div class="collapse song-collapse" id="song-info-collapse4">
+                <div class="card card-body">
+                  <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 63.8%;" aria-valuenow="0.638"
+                      aria-valuemin="0" aria-valuemax="1">
+                      Danceability
+                    </div>
+                  </div>
+                  <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 4.9%;" aria-valuenow="0.049"
+                      aria-valuemin="0" aria-valuemax="1">
+                      Speechiness
+                    </div>
+                  </div>
+                  <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 14.1%;" aria-valuenow="0.141"
+                      aria-valuemin="0" aria-valuemax="1">
+                      Acousticness
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#song-lyric-collapse5"
+                aria-expanded="false" aria-controls="song-lyric-collapse5">
+                Song Lyrics
+              </button>
+              <div class="collapse song-collapse" id="song-lyric-collapse5">
+                <div class="card card-body song-lyric">
+                  Do you ever feel like a plastic bag
+                  Drifting through the wind, wanting to start again?
+                  Do you ever feel, feel so paper-thin
+                  Like a house of cards, one blow from caving in?
+                  Do you ever feel already buried deep?
+                  Six feet under screams, but no one seems to hear a thing
+                  Do you know that there's still a chance for you?
+                  'Cause there's a spark in you
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+  </script>
+</body>
