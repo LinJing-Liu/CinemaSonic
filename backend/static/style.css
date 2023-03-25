@@ -12,53 +12,9 @@
     flex-direction: column;
 }
 
-#CinemaSonic {
-    color: #4285F4;
-}
-
-#google-s {
-    color: #DB4437;
-}
-
-#google-4 {
-    color: #F4B400;
-}
-
-#google-3 {
-    color: #4285F4;
-}
-
-#google-0-1 {
-    color: #0F9D58;
-}
-
-#google-0-2 {
-    color: #DB4437;
-}
-
-.google-colors {
-    display: flex;
-    align-items: center;
-    font-size: 48px;
-    font-family: 'Open Sans', sans-serif;
-}
-
-.google-colors h1 {
-    margin-bottom: 0;
-    margin-right: 3px;
-}
-
-.input-movie {
-    border-radius: 50px;
-    border: 1px solid black;
-    display: flex;
-    align-items: center;
-    margin-top: 10px;
-    padding: 12px;
-    width: 600px;
-}
-
-.input-desc {
+.input-movie,
+.input-desc,
+.form-control.input-genre {
     border-radius: 50px;
     border: 1px solid black;
     display: flex;
@@ -79,35 +35,11 @@
     align-items: center;
 }
 
-.input-movie input {
-    width: 100%;
-    margin-left: 10px;
-    font-size: 16px;
-    border: none;
-    outline: 0;
-}
-
+.input-movie input,
 .input-desc input {
     width: 100%;
     margin-left: 10px;
     font-size: 16px;
     border: none;
     outline: 0;
-}
-
-#answer-box {
-    width: 700px;
-    margin-top: 50px;
-}
-
-.episode-title {
-    font-family: 'Kanit', sans-serif;
-}
-
-.episode-desc {
-    font-family: 'Montserrat', sans-serif;
-}
-
-.other-genre-input {
-    display: none;
 }

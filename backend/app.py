@@ -34,9 +34,11 @@ def sql_search(episode):
     data = mysql_engine.query_selector(query_sql)
     return json.dumps([dict(zip(keys,i)) for i in data])
 
+MOVIEGENRELIST = ["Action", "Adventure", "Comedy", "Horror", "Other"]
+
 @app.route("/")
 def home():
-    return render_template('base.html',title="sample html")
+    return render_template('base.html', movieGenres=MOVIEGENRELIST)
 
 @app.route("/episodes")
 def episodes_search():
@@ -47,5 +49,5 @@ def episodes_search():
 def output():
     return render_template('output.html',title="sample output")
 
-# app.run(debug=True)
-app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)

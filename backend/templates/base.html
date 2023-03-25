@@ -1,15 +1,23 @@
 <!doctype html>
-<title>
-    {% block title %}{% endblock %} - Flaskr
-</title>
 
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
-    rel="stylesheet">
+<head>
+    <title>
+        {% block title %}Home{% endblock %}
+    </title>
 
-<body>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+</head>
+
+<body onload="initialize()">
     <div class="full-body-container">
         <div class="top-text">
             <div class="title">
@@ -17,99 +25,39 @@
                 <h2 id="subtitle">*insert project tagline*</h2>
             </div>
             <div class="input-boxes">
-                <!-- title input-->
-                <div class="input-movie" onclick="sendFocusTitleIn()">
-                    <img src="{{ url_for('static', filename='images/mag.png') }}" />
-                    <input placeholder="Enter the movie title (ex: The Matrix)" id="title-in" onkeyup="filterText()">
-                </div>
-                <!-- description input-->
-                <div class="input-desc" onclick="sendFocusDescIn()">
-                    <input placeholder="(optional) Describe the movie in once sentence" id="desc-in">
-                </div>
-                <!-- genre dropdown/input-->
-                <div class="genre-picker">
-                    <label for="genre-options">Genre</label>
-                    <select name="genre-options" id="genre-options" onchange="showOtherInput()">
-                        <option value=""></option>
-                        <option value="Action">Action</option>
-                        <option value="Adventure">Adventure</option>
-                        <option value="Drama">Drama</option>
-                        <option value="Comedy">Comedy</option>
-                        <option value="Horror">Horror</option>
-                        <option value="***add more genres***">***add more genres***</option>
-                        <option value="other">Other</option>
-                    </select>
-                    <div class="other-genre-input" id="other-genre-input">
-                        <label for="other-text">Please specify:</label>
-                        <input type="text" name="other-text" id="other-text">
+                <form id="input-form">
+                    <div class="form-group">
+                        <label for="inputMovie">Movie Title</label>
+                        <div class="input-movie">
+                            <img src="{{ url_for('static', filename='images/mag.png') }}" />
+                            <input placeholder="Enter the movie title (ex: The Matrix)" id="title-in">
+                        </div>
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label for="inputDescription">Movie Description</label>
+                        <div class="input-desc">
+                            <input placeholder="(optional) Describe the movie in once sentence" id="desc-in">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputGenre">Genre</label>
+                        <select class="form-control form-select" aria-label="Movie Genre Select" id="genre-in">
+                            <option selected>Select a movie.</option>
+                            {% for i in movieGenres %}
+                            <option>{{ i }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="text" class="form-control input-genre" placeholder="If other: specify movie genre."
+                            id="other-movie-genre">
+                    </div>
+                    <button type="submit" class="btn btn-primary" onclick="submit">Find me songs!</button>
+                    <button type="reset" class="btn btn-primary" onclick="reset">Reset Form</button>
+                </form>
             </div>
-
-        </div>
-        <div id="submitting">
-            <button type="submit-button" onclick="submitInput()">Find me songs!</button>
         </div>
 
-
-        <div id="answer-box">
-
+        <div id="output">
+            <div class="container">
+            </div>
         </div>
-    </div>
-
-    <script>
-
-        function answerBoxTemplate(title, titleDesc) {
-            return `<div class=''>
-                <h3 class='episode-title'>${title}</h3>
-                <p class='episode-desc'>${titleDesc}</p>
-            </div>`
-        }
-
-        function sendFocusTitleIn() {
-            document.getElementById("title-in").focus()
-        }
-        function sendFocusDescIn() {
-            document.getElementById("desc-in").focus()
-        }
-
-        function filterText() {
-            document.getElementById("answer-box").innerHTML = ""
-            console.log(document.getElementById("title-in").value)
-            fetch("/episodes?" + new URLSearchParams({ title: document.getElementById("title-in").value }).toString())
-                .then((response) => response.json())
-                .then((data) => data.forEach(row => {
-
-                    let tempDiv = document.createElement("div")
-                    tempDiv.innerHTML = answerBoxTemplate(row.title, row.descr)
-                    document.getElementById("answer-box").appendChild(tempDiv)
-                }));
-
-        }
-
-        function showOtherInput() {
-            const selectElement = document.getElementById('genre-options');
-            const otherInputElement = document.getElementById('other-genre-input');
-
-            if (selectElement.value === 'other') {
-                otherInputElement.style.display = 'block';
-            } else {
-                otherInputElement.style.display = 'none';
-            }
-        }
-        function submitInput() {
-            title = document.getElementById("title-in").value
-            description = document.getElementById("desc-in").value
-            genre = document.getElementById("genre-options").value
-            if (genre == "other") {
-                genre = document.getElementById("other-text").value
-            }
-            outDict = { "Title": title, "Description": description, "Genre": genre }
-            //send outDict somewhere... where?
-            //console.log(outDict)
-
-        }
-
-
-    </script>
 </body>
