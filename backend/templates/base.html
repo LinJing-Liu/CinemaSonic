@@ -22,7 +22,7 @@
         <div class="top-text">
             <div class="title">
                 <h1 id="CinemaSonic">CinemaSonic</h1>
-                <h2 id="subtitle">*insert project tagline*</h2>
+                <h2 id="subtitle">Find songs that match your movie taste!</h2>
             </div>
             <div class="input-boxes">
                 <form id="input-form">
@@ -42,12 +42,12 @@
                     <div class="form-group">
                         <label for="inputGenre">Genre</label>
                         <select class="form-control form-select" aria-label="Movie Genre Select" id="genre-in">
-                            <option selected>Select a movie.</option>
+                            <option selected>Select a genre</option>
                             {% for i in movieGenres %}
                             <option>{{ i }}</option>
                             {% endfor %}
                         </select>
-                        <input type="text" class="form-control input-genre" placeholder="If other: specify movie genre."
+                        <input type="text" class="form-control input-genre" placeholder="If other: specify movie genre"
                             id="other-movie-genre">
                     </div>
                     <button type="submit" class="btn btn-primary" onclick="submit">Find me songs!</button>
