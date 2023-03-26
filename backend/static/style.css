@@ -43,3 +43,11 @@
     border: none;
     outline: 0;
 }
+
+.checklist {
+    list-style-type: none;
+}
+
+.checklist li {
+    margin-bottom: 10px;
+}

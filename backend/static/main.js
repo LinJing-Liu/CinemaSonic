@@ -2,15 +2,18 @@
 function answerBoxTemplate(title, titleDesc) {
   return `<div class=''>
       <h3 class='episode-title'>${title}</h3>
-      <p class='episode-desc'>${titleDesc}</p>
+      <p class='episode-director'>${titleDesc}</p>
   </div>`
 }
 
 function sendFocusTitleIn() {
   document.getElementById("title-in").focus()
 }
-function sendFocusDescIn() {
-  document.getElementById("desc-in").focus()
+function sendFocusDirectorIn() {
+  document.getElementById("director-in").focus()
+}
+function sendFocusActorsIn() {
+  document.getElementById("actors-in").focus()
 }
 
 function filterText() {
@@ -21,7 +24,7 @@ function filterText() {
     .then((data) => data.forEach(row => {
 
       let tempDiv = document.createElement("div")
-      tempDiv.innerHTML = answerBoxTemplate(row.title, row.descr)
+      tempDiv.innerHTML = answerBoxTemplate(row.title, row.desc)
       document.getElementById("answer-box").appendChild(tempDiv)
     }));
 
@@ -42,13 +45,14 @@ function showOtherInput() {
 function submit(e) {
   e.preventDefault();
   var title = document.getElementById("title-in").value;
-  var description = document.getElementById("desc-in").value;
+  var director = document.getElementById("director-in").value;
+  var actors = document.getElementById("actors-in").value;
   var genre = document.getElementById("genre-in").value;
   console.log(genre);
   if (genre == "Other") {
     genre = document.getElementById("other-movie-genre").value;
   }
-  outDict = { "Title": title, "Description": description, "Genre": genre };
+  outDict = { "Title": title, "Director": director, "Actors": actors, "Genre": genre };
   //send outDict somewhere... where?
   console.log(outDict);
 
@@ -85,6 +89,8 @@ function submit(e) {
 
   displayOutput(songList);
 }
+
+
 
 function displayOutput(songList) {
   var output = document.getElementById("output");
@@ -170,6 +176,7 @@ function createSongCard(title, genre, duration, lyrics, features, id) {
     </div>
   `
 }
+
 
 function reset() {
   document.getElementById("output").innerHTML = "";
