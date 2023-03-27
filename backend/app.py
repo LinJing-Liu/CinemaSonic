@@ -77,8 +77,7 @@ def sql_search(movie):
         
         first_25 = ranked_cosine_score[:25]
         first_25_index = [ind for _, ind in first_25]
-        first_25_songs = songs_df.iloc[first_25_index]
-
+        first_25_songs = songs_df.iloc[first_25_index].to_dict('index')
         song_list = result_to_json(first_25_songs)
         return json.dumps(song_list)
 
