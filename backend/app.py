@@ -4,7 +4,7 @@ from flask import Flask, render_template, request
 from flask_cors import CORS
 from helpers.MySQLDatabaseHandler import MySQLDatabaseHandler
 
-from cosine_sim import build_inverted_index, compute_idf, compute_doc_norms, accumulate_dot_scores, text_to_term_dict, index_search
+from cosine_sim import *
 import csv
 import pandas as pd
 from nltk.tokenize import TreebankWordTokenizer
@@ -12,19 +12,18 @@ import math
 
 # precompute inverted index and idf
 pd.set_option('max_colwidth', 600)
-songs_df = pd.read_csv("../spotify_millsongdata.csv")
+songs_df = pd.read_csv("../clean_song_dataset.csv")
+movies_df = pd.read_csv("../clean_movie_dataset.csv")
 
-song_names = list(songs_df["song"])
-data = list(songs_df["text"])
-clean_data = [i.replace('\n','').replace('\r','') for i in data]
-
-tokenized_data = [lyrics.lower().split() for lyrics in clean_data]
+# extract lyrics and movie tokens as list of strings
+songs_df['tokens'] = songs_df["clean lyrics"].apply(eval)
+movies_df['tokens'] = movies_df["clean about"].apply(eval)
 
 # build inverted index of song lyrics
-inverted_lyric_index = build_inverted_index(tokenized_data)
+inverted_lyric_index = build_inverted_index(songs_df['tokens'])
 
 # build idf
-n_docs = len(clean_data)
+n_docs = songs_df.shape[0]
 lyric_idf = compute_idf(inverted_lyric_index, n_docs)
 
 # build norms
@@ -54,24 +53,35 @@ CORS(app)
 # Sample search, the LIKE operator in this case is hard-coded, 
 # but if you decide to use SQLAlchemy ORM framework, 
 # there's a much better and cleaner way to do this
-def sql_search(episode):
-    episode_lower = episode.lower()
-    ranked_cosine_score = index_search(
-        episode_lower,
-        inverted_lyric_index,
-        lyric_idf,
-        doc_norms
-        )
-    
-    first_five_scores = ranked_cosine_score[:5]
-    #first_five_data = [[song_names[i], clean_data[i]] for score, i in ranked_cosine_score]
+def sql_search(movie):
+    movie_lower = movie.lower()
 
-    # query_sql = f"""SELECT * FROM episodes WHERE LOWER( title ) LIKE '%%{episode.lower()}%%' limit 10"""
-    keys = ["name","lyrics"]
-    good_songs = [[song_names[i], clean_data[i]] for score, i in ranked_cosine_score]
-    print(good_songs)
-    
-    return json.dumps([dict(zip(keys,i)) for i in good_songs])
+    # 1. find matching movies in the database
+    matching_movies = movies_df[movies_df['title'].str.lower() == "The Dark Knight"]
+
+    # 2. If the movie has no matches:
+    if matching_movies.shape[0] == 0:
+        return json.dumps([])
+    else:
+        # 3. If the movie has matches:
+        target_movie = matching_movies.iloc[0]
+        movie_tokens = target_movie['tokens']
+        movie_about = target_movie['about']
+        
+        ranked_cosine_score = index_search(
+            movie_about.lower(),
+            inverted_lyric_index,
+            lyric_idf,
+            doc_norms
+            )
+        
+        first_25 = ranked_cosine_score[:25]
+        first_25_index = [ind for _, ind in first_25]
+        first_25_songs = songs_df.iloc[first_25_index]
+
+        song_list = result_to_json(first_25_songs)
+        return json.dumps(song_list)
+
 
 @app.route("/")
 def home():

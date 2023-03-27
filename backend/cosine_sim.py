@@ -13,10 +13,11 @@ def build_inverted_index(msgs):
     Arguments
     =========
     
-    msgs: list of dicts.
-        Each message in this list already has a 'toks'
-        field that contains the tokenized message.
-    
+    msgs: list of lists.
+        Each message in this list is represented as a list of tokens
+        in the lyrics.
+        e.g. ['eyes', 'transfixed', 'deadly', 'riff', 'future']
+
     Returns
     =======
     
@@ -30,13 +31,14 @@ def build_inverted_index(msgs):
     =======
     
     >> test_idx = build_inverted_index([
-    ...    {'toks': ['to', 'be', 'or', 'not', 'to', 'be']},
-    ...    {'toks': ['do', 'be', 'do', 'be', 'do']}])
+    ...    ['yeah', 'bro'],
+    ...    ['yeah', 'yeah']
+    ...])
     
-    >> test_idx['be']
-    [(0, 2), (1, 2)]
+    >> test_idx['yeah']
+    [(0, 1), (1, 2)]
     
-    >> test_idx['not']
+    >> test_idx['bro']
     [(0, 1)]
     
     """
@@ -248,3 +250,71 @@ def index_search(query, index, idf, doc_norms, score_func=accumulate_dot_scores,
         cosine_sim.append((score, i))
     
     return sorted(cosine_sim, key=lambda x : x[0], reverse=True)
+
+def result_to_json(first_25_songs):
+    song_list = []
+    for query_result in first_25_songs.values():
+        song = {}
+        song['title'] = query_result['song_name']
+        song['genre'] = query_result['genre']
+        song['duration'] = query_result['duration_ms']
+        song['lyrics'] = query_result['lyrics']
+        features = {}
+        features['danceability'] = query_result['danceability']
+        features['energy'] = query_result['energy']
+        features['key'] = query_result['key']
+        features['loudness'] = query_result['loudness']
+        features['mode'] = query_result['mode']
+        features['speechiness'] = query_result['speechiness']
+        features['acousticness'] = query_result['acousticness']
+        features['instrumentalness'] = query_result['instrumentalness']
+        features['liveness'] = query_result['liveness']
+        features['valence'] = query_result['valence']
+        features['tempo'] = query_result['tempo']
+        song['features'] = features
+        song_list.append(song)
+    return song_list
+
+# # precompute inverted index and idf
+# pd.set_option('max_colwidth', 600)
+# songs_df = pd.read_csv("../clean_song_dataset.csv")
+# movies_df = pd.read_csv("../clean_movie_dataset.csv")
+
+# # extract lyrics and movie tokens as list of strings
+# songs_df['tokens'] = songs_df["clean lyrics"].apply(eval)
+# movies_df['tokens'] = movies_df["clean about"].apply(eval)
+
+# # build inverted index of song lyrics
+# inverted_lyric_index = build_inverted_index(songs_df['tokens'])
+
+# # build idf
+# n_docs = songs_df.shape[0]
+# lyric_idf = compute_idf(inverted_lyric_index, n_docs)
+
+# # build norms
+# doc_norms = compute_doc_norms(inverted_lyric_index, lyric_idf, n_docs)
+
+# target_movie = movies_df[movies_df['title'].str.lower() == "the dark knight"].iloc[0]
+# movie_tokens = target_movie['tokens']
+# movie_about = target_movie['about'].lower()
+# print(movie_about)
+
+# ranked_cosine_score = index_search(
+#             movie_about,
+#             inverted_lyric_index,
+#             lyric_idf,
+#             doc_norms
+#             )
+
+# first_25_scores = ranked_cosine_score[:25]
+# first_25_index = [ind for _, ind in first_25_scores]
+# first_25_songs = songs_df.iloc[first_25_index].to_dict('index')
+
+# # return the values as a list of dictionaries
+# song_list = result_to_json(first_25_songs)
+
+# print(song_list[0])
+
+
+
+
