@@ -32,32 +32,34 @@ doc_norms = compute_doc_norms(inverted_lyric_index, lyric_idf, n_docs)
 
 # ROOT_PATH for linking with all your files. 
 # Feel free to use a config.py or settings.py with a global export variable
-os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..",os.curdir))
+os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..", os.curdir))
 
 # These are the DB credentials for your OWN MySQL
 # Don't worry about the deployment credentials, those are fixed
 # You can use a different DB name if you want to
 MYSQL_USER = "root"
-MYSQL_USER_PASSWORD = "060820Mollie!"
+MYSQL_USER_PASSWORD = "mysql"
 MYSQL_PORT = 3306
 MYSQL_DATABASE = "kardashiandb"
 
-mysql_engine = MySQLDatabaseHandler(MYSQL_USER,MYSQL_USER_PASSWORD,MYSQL_PORT,MYSQL_DATABASE)
+mysql_engine = MySQLDatabaseHandler(
+    MYSQL_USER, MYSQL_USER_PASSWORD, MYSQL_PORT, MYSQL_DATABASE)
 
 # Path to init.sql file. This file can be replaced with your own file for testing on localhost, but do NOT move the init.sql file
 mysql_engine.load_file_into_db()
 
 app = Flask(__name__)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 CORS(app)
 
-# Sample search, the LIKE operator in this case is hard-coded, 
-# but if you decide to use SQLAlchemy ORM framework, 
+# Sample search, the LIKE operator in this case is hard-coded,
+# but if you decide to use SQLAlchemy ORM framework,
 # there's a much better and cleaner way to do this
+@app.route('/get_output/<movie>')
 def sql_search(movie):
     movie_lower = movie.lower()
-
     # 1. find matching movies in the database
-    matching_movies = movies_df[movies_df['title'].str.lower() == "The Dark Knight"]
+    matching_movies = movies_df[movies_df['title'].str.lower() == movie_lower]
 
     # 2. If the movie has no matches:
     if matching_movies.shape[0] == 0:
@@ -77,15 +79,18 @@ def sql_search(movie):
         
         first_25 = ranked_cosine_score[:25]
         first_25_index = [ind for _, ind in first_25]
-        first_25_songs = songs_df.iloc[first_25_index]
-
+        first_25_songs = songs_df.iloc[first_25_index].to_dict('index')
         song_list = result_to_json(first_25_songs)
         return json.dumps(song_list)
+
+MOVIEGENRELIST = ["Action", "Adventure", "Comedy", "Drama",
+                  "Fantasy", "Horror", "Romance", "Sci-fi", "Thriller", "Other"]
 
 
 @app.route("/")
 def home():
-    return render_template('base.html',title="sample html")
+    return render_template('base.html', movieGenres=MOVIEGENRELIST)
+
 
 @app.route("/episodes")
 def episodes_search():

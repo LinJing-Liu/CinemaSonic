@@ -1,59 +1,136 @@
 <!doctype html>
-<title>{% block title %}{% endblock %} - Flaskr</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
-    rel="stylesheet">
 
-<body>
+<head>
+    <title>
+        {% block title %}Home{% endblock %}
+    </title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+</head>
+
+<body onload="initialize()">
     <div class="full-body-container">
         <div class="top-text">
-            <div class="google-colors">
-                <h1 id="google-c">C</h1>
-                <h1 id="google-s">S</h1>
-                <h1 id="google-4">4</h1>
-                <h1 id="google-3">3</h1>
-                <h1 id="google-0-1">0</h1>
-                <h1 id="google-0-2">0</h1>
+            <div class="title">
+                <h1 id="cinemaSonic">CinemaSonic</h1>
+                <h2 id="subtitle">Find songs that match your movie taste!</h2>
             </div>
-            <div class="input-box" onclick="sendFocus()">
-                <img src="{{ url_for('static', filename='images/mag.png') }}" />
-                <input placeholder="Search for a Keeping up with the Kardashians episode" id="filter-text-val"
-                    onkeyup="filterText()">
+            <div class="input-boxes">
+                <form id="input-form">
+                    <div class="form-group">
+                        <label for="inputMovie">Movie Title</label>
+                        <div class="input-movie">
+                            <img src="{{ url_for('static', filename='images/mag.png') }}" />
+                            <input placeholder="Enter the movie title (ex: The Matrix)" id="title-in">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputGenre">Genre</label>
+                        <select class="form-control form-select" aria-label="Movie Genre Select" id="genre-in">
+                            <option selected>Select a genre</option>
+                            {% for i in movieGenres %}
+                            <option>{{ i }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="text" class="form-control input-genre" placeholder="If other: specify movie genre"
+                            id="other-movie-genre">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputDirector">Director</label>
+                        <div class="input-director">
+                            <input placeholder="(optional)" id="director-in">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputActors">Actors</label>
+                        <div class="input-actors">
+                            <input placeholder="(optional)" id="actors-in">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <div class="filters">
+                            <div class="pop-filter">
+                                <label for="popularity">Popularity</label>
+                                <input type="range" min="1" max="3" value="2" class="slider" id="popularity-range">
+                                <ul class="labels">
+                                    <li>Niche only</li>
+                                    <li>Anything</li>
+                                    <li>Popular only</li>
+                                </ul>
+                            </div>
+                            <div class="length-filter">
+                                <label for="length">Song length</label>
+                                <input type="range" min="1" max="3" value="2" class="slider" id="popularity-range">
+                                <ul class="labels">
+                                    <li>Short</li>
+                                    <li>Anything</li>
+                                    <li>Long</li>
+                                </ul>
+                            </div>
+                            <div class="genre-filter">
+                                <label for="genre">Song genres</label>
+                                <button class="btn btn-primary" type="button" data-toggle="collapse"
+                                    data-target="#songGenreCollapse" aria-expanded="false"
+                                    aria-controls="songGenreCollapse" id="genreToggleButton"></button>
+                                <div class="collapse" id="songGenreCollapse">
+                                    <ul class="checklist">
+                                        <li>
+                                            <input type="checkbox" id="all" checked>
+                                            <label for="all">All</label>
+                                        </li>
+                                        <li>
+                                            <input type="checkbox" class="music-genre" id="country-genre" checked>
+                                            <label for="country">Country</label>
+                                        </li>
+
+                                        <li>
+                                            <input type="checkbox" class="music-genre" id="hiphop-genre" checked>
+                                            <label for="hiphop">Hip hop</label>
+                                        </li>
+                                        <li>
+                                            <input type="checkbox" class="music-genre" id="pop-genre" checked>
+                                            <label for="pop">Pop</label>
+                                        </li>
+
+                                        <li>
+                                            <input type="checkbox" class="music-genre" id="rap-genre" checked>
+                                            <label for="rap">Rap</label>
+                                        </li>
+                                        <li>
+                                            <input type="checkbox" class="music-genre" id="rnb-genre" checked>
+                                            <label for="rock">RnB</label>
+                                        </li>
+                                        <li>
+                                            <input type="checkbox" class="music-genre" id="rock-genre" checked>
+                                            <label for="rock">Rock</label>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="formButton">
+                        <button type="submit" class="btn btn-primary" id="submitButton" onclick="submit">Find me
+                            songs!</button>
+                        <button type="reset" class="btn btn-primary" id="resetButton" onclick="reset">Reset
+                            Form</button>
+                    </div>
+                </form>
             </div>
         </div>
-        <div id="answer-box">
 
+        <div id="output">
         </div>
-    </div>
-
-    <script>
-
-        function answerBoxTemplate(title, titleDesc) {
-            return `<div class=''>
-                <h3 class='episode-title'>${title}</h3>
-                <p class='episode-desc'>${titleDesc}</p>
-            </div>`
-        }
-
-        function sendFocus() {
-            document.getElementById('filter-text-val').focus()
-        }
-
-        function filterText() {
-            document.getElementById("answer-box").innerHTML = ""
-            console.log(document.getElementById("filter-text-val").value)
-            fetch("/episodes?" + new URLSearchParams({ title: document.getElementById("filter-text-val").value }).toString())
-                .then((response) => response.json())
-                .then((data) => data.forEach(row => {
-
-                    let tempDiv = document.createElement("div")
-                    tempDiv.innerHTML = answerBoxTemplate(row.title, row.descr)
-                    document.getElementById("answer-box").appendChild(tempDiv)
-                }));
-
-        }
-
-    </script>
 </body>
