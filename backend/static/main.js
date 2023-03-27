@@ -177,7 +177,6 @@ function createSongCard(title, genre, duration, lyrics, features, id) {
   `
 }
 
-
 function reset() {
   document.getElementById("output").innerHTML = "";
 }

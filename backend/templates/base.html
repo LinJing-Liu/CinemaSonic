@@ -53,7 +53,7 @@
                     </div>
                     <div class="form-group">
                         <label for="inputActors">Actors</label>
-                        <div class="input-Actors">
+                        <div class="input-actors">
                             <input placeholder="(optional)" id="actors-in">
                         </div>
                     </div>
@@ -63,11 +63,21 @@
                         <div class="filters">
                             <div class="pop-filter">
                                 <label for="popularity">Popularity: </label>
-                                <input type="range" min="1" max="3" value="1" class="slider" id="popularity-range">
+                                <input type="range" min="1" max="3" value="2" class="slider" id="popularity-range">
+                                <ul class="labels">
+                                    <li>Niche only</li>
+                                    <li>Anything</li>
+                                    <li>Popular only</li>
+                                </ul>
                             </div>
                             <div class="length-filter">
                                 <label for="length">Song length: </label>
-                                <input type="range" min="1" max="3" value="1" class="slider" id="popularity-range">
+                                <input type="range" min="1" max="3" value="2" class="slider" id="popularity-range">
+                                <ul class="labels">
+                                    <li>Short</li>
+                                    <li>Anything</li>
+                                    <li>Long</li>
+                                </ul>
                             </div>
                             <div class="genre-filter">
                                 <label for="genre">Song genres: </label>
@@ -77,33 +87,38 @@
                                         <label for="all">All</label>
                                     </li>
                                     <li>
-                                        <input type="checkbox" class="item" id="item1">
-                                        <label for="pop">Pop</label>
+                                        <input type="checkbox" class="music-genre" id="country-genre" checked>
+                                        <label for="country">Country</label>
                                     </li>
+
                                     <li>
-                                        <input type="checkbox" class="item" id="item2">
+                                        <input type="checkbox" class="music-genre" id="hiphop-genre" checked>
                                         <label for="hiphop">Hip hop</label>
                                     </li>
                                     <li>
-                                        <input type="checkbox" class="item" id="item3">
-                                        <label for="rock">Rock</label>
+                                        <input type="checkbox" class="music-genre" id="pop-genre" checked>
+                                        <label for="pop">Pop</label>
                                     </li>
+
                                     <li>
-                                        <input type="checkbox" class="item" id="item4">
+                                        <input type="checkbox" class="music-genre" id="rap-genre" checked>
                                         <label for="rap">Rap</label>
                                     </li>
                                     <li>
-                                        <input type="checkbox" class="item" id="item5">
-                                        <label for="country">Country</label>
+                                        <input type="checkbox" class="music-genre" id="rnb-genre" checked>
+                                        <label for="rock">RnB</label>
                                     </li>
+                                    <li>
+                                        <input type="checkbox" class="music-genre" id="rock-genre" checked>
+                                        <label for="rock">Rock</label>
+                                    </li>
+
                                 </ul>
                             </div>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary" onclick="submit">Find me songs!</button>
                     <button type="reset" class="btn btn-primary" onclick="reset">Reset Form</button>
-
-
                 </form>
             </div>
         </div>

@@ -14,7 +14,9 @@
 
 .input-movie,
 .input-desc,
-.form-control.input-genre {
+.form-control.input-genre,
+.input-director,
+.input-actors {
     border-radius: 50px;
     border: 1px solid black;
     display: flex;
@@ -36,7 +38,9 @@
 }
 
 .input-movie input,
-.input-desc input {
+.input-desc input,
+.input-director input,
+.input-actors input {
     width: 100%;
     margin-left: 10px;
     font-size: 16px;
@@ -50,4 +54,17 @@
 
 .checklist li {
     margin-bottom: 10px;
+}
+
+.labels {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0;
+    list-style-type: none;
+    margin-top: 5px;
+}
+
+.labels li {
+    text-align: center;
 }
