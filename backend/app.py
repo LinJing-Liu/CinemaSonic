@@ -57,7 +57,7 @@ def sql_search(movie):
     movie_lower = movie.lower()
 
     # 1. find matching movies in the database
-    matching_movies = movies_df[movies_df['title'].str.lower() == "The Dark Knight"]
+    matching_movies = movies_df[movies_df['title'].str.lower() == movie_lower]
 
     # 2. If the movie has no matches:
     if matching_movies.shape[0] == 0:
