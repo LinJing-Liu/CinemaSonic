@@ -15,11 +15,21 @@
 }
 
 .card-body {
-  background-color: rgb(236, 254, 236);
   padding: 20px;
   border-radius: 30px;
   box-shadow: 2px 2px 4px #767676;
-  border: 2px solid rgb(53, 104, 53);
+  border: 2px solid #AB987A;
+  font-weight: 100 !important;
+}
+
+.card .btn,
+.card .btn:focus,
+.card .btn:hover,
+.card .btn:enabled {
+  background-color: #AB987A;
+  color: black;
+  border: none !important;
+  margin-bottom: 10px;
 }
 
 .card img {
@@ -29,8 +39,7 @@
 .card-title {
   font-size: 24px;
   margin-top: 25px;
-  font-weight: bold;
-  color: rgb(48, 40, 113);
+  color: #ff533D;
 }
 
 .card-artist,
@@ -45,13 +54,15 @@
 }
 
 .progress {
-  height: 25px;
+  height: 35px;
   font-size: 16px;
+  border-radius: 7px;
 }
 
 .progress div {
   display: block;
   color: black;
+  font-size: 18px;
   border-radius: 7px;
 }
 

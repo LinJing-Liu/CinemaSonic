@@ -21,7 +21,7 @@
     <div class="full-body-container">
         <div class="top-text">
             <div class="title">
-                <h1 id="CinemaSonic">CinemaSonic</h1>
+                <h1 id="cinemaSonic">CinemaSonic</h1>
                 <h2 id="subtitle">Find songs that match your movie taste!</h2>
             </div>
             <div class="input-boxes">
@@ -62,7 +62,7 @@
                     <div class="form-group">
                         <div class="filters">
                             <div class="pop-filter">
-                                <label for="popularity">Popularity: </label>
+                                <label for="popularity">Popularity</label>
                                 <input type="range" min="1" max="3" value="2" class="slider" id="popularity-range">
                                 <ul class="labels">
                                     <li>Niche only</li>
@@ -71,7 +71,7 @@
                                 </ul>
                             </div>
                             <div class="length-filter">
-                                <label for="length">Song length: </label>
+                                <label for="length">Song length</label>
                                 <input type="range" min="1" max="3" value="2" class="slider" id="popularity-range">
                                 <ul class="labels">
                                     <li>Short</li>
@@ -80,54 +80,57 @@
                                 </ul>
                             </div>
                             <div class="genre-filter">
-                                <label for="genre">Song genres: </label>
-                                <ul class="checklist">
-                                    <li>
-                                        <input type="checkbox" id="all" checked onclick='handleAllClick(this);'>
-                                        <label for="all">All</label>
-                                    </li>
-                                    <li>
-                                        <input type="checkbox" class="music-genre" id="country-genre" checked>
-                                        <label for="country">Country</label>
-                                    </li>
+                                <label for="genre">Song genres</label>
+                                <button class="btn btn-primary" type="button" data-toggle="collapse"
+                                    data-target="#songGenreCollapse" aria-expanded="false"
+                                    aria-controls="songGenreCollapse" id="genreToggleButton"></button>
+                                <div class="collapse" id="songGenreCollapse">
+                                    <ul class="checklist">
+                                        <li>
+                                            <input type="checkbox" id="all" checked>
+                                            <label for="all">All</label>
+                                        </li>
+                                        <li>
+                                            <input type="checkbox" class="music-genre" id="country-genre" checked>
+                                            <label for="country">Country</label>
+                                        </li>
 
-                                    <li>
-                                        <input type="checkbox" class="music-genre" id="hiphop-genre" checked>
-                                        <label for="hiphop">Hip hop</label>
-                                    </li>
-                                    <li>
-                                        <input type="checkbox" class="music-genre" id="pop-genre" checked>
-                                        <label for="pop">Pop</label>
-                                    </li>
+                                        <li>
+                                            <input type="checkbox" class="music-genre" id="hiphop-genre" checked>
+                                            <label for="hiphop">Hip hop</label>
+                                        </li>
+                                        <li>
+                                            <input type="checkbox" class="music-genre" id="pop-genre" checked>
+                                            <label for="pop">Pop</label>
+                                        </li>
 
-                                    <li>
-                                        <input type="checkbox" class="music-genre" id="rap-genre" checked>
-                                        <label for="rap">Rap</label>
-                                    </li>
-                                    <li>
-                                        <input type="checkbox" class="music-genre" id="rnb-genre" checked>
-                                        <label for="rock">RnB</label>
-                                    </li>
-                                    <li>
-                                        <input type="checkbox" class="music-genre" id="rock-genre" checked>
-                                        <label for="rock">Rock</label>
-                                    </li>
-
-                                </ul>
+                                        <li>
+                                            <input type="checkbox" class="music-genre" id="rap-genre" checked>
+                                            <label for="rap">Rap</label>
+                                        </li>
+                                        <li>
+                                            <input type="checkbox" class="music-genre" id="rnb-genre" checked>
+                                            <label for="rock">RnB</label>
+                                        </li>
+                                        <li>
+                                            <input type="checkbox" class="music-genre" id="rock-genre" checked>
+                                            <label for="rock">Rock</label>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary" onclick="submit">Find me songs!</button>
-                    <button type="reset" class="btn btn-primary" onclick="reset">Reset Form</button>
+                    <div class="formButton">
+                        <button type="submit" class="btn btn-primary" id="submitButton" onclick="submit">Find me
+                            songs!</button>
+                        <button type="reset" class="btn btn-primary" id="resetButton" onclick="reset">Reset
+                            Form</button>
+                    </div>
                 </form>
             </div>
         </div>
 
         <div id="output">
-            <div class="container">
-
-            </div>
-
-
-
+        </div>
 </body>

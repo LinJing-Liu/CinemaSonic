@@ -177,6 +177,25 @@ function createSongCard(title, genre, duration, lyrics, features, id) {
   `
 }
 
+function toggleGenreChecks() {
+  var checkboxes = document.getElementsByClassName("music-genre");
+  var allChecked = document.getElementById("all");
+  var checkValue = allChecked.checked ? true : false;
+
+  for (var check of checkboxes) {
+    check.checked = checkValue;
+  }
+}
+
+function toggleCollapseText() {
+  var toggleButton = document.getElementById("genreToggleButton");
+  if (toggleButton.innerHTML == "Show") {
+    toggleButton.innerHTML = "Hide";
+  } else {
+    toggleButton.innerHTML = "Show";
+  }
+}
+
 function reset() {
   document.getElementById("output").innerHTML = "";
 }
@@ -184,4 +203,8 @@ function reset() {
 function initialize() {
   document.getElementById("input-form").addEventListener('submit', submit);
   document.getElementById("input-form").addEventListener('reset', reset);
+  document.getElementById("all").addEventListener('click', toggleGenreChecks);
+  document.getElementById("all").checked = true;
+  document.getElementById("genreToggleButton").innerHTML = "Show";
+  document.getElementById("genreToggleButton").addEventListener('click', toggleCollapseText);
 }
