@@ -9,10 +9,15 @@ import pandas as pd
 from nltk.tokenize import TreebankWordTokenizer
 import math
 
+# ROOT_PATH for linking with all your files.
+# Feel free to use a config.py or settings.py with a global export variable
+os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..", os.curdir))
+print(os.environ['ROOT_PATH'])
+
 # precompute inverted index and idf
 pd.set_option('max_colwidth', 600)
-songs_df = pd.read_csv("../clean_song_dataset.csv")
-movies_df = pd.read_csv("../clean_movie_dataset.csv")
+songs_df = pd.read_csv(os.path.join(os.environ['ROOT_PATH'], "clean_song_dataset.csv"))
+movies_df = pd.read_csv(os.path.join(os.environ['ROOT_PATH'], "clean_movie_dataset.csv"))
 
 # extract lyrics and movie tokens as list of strings
 songs_df['tokens'] = songs_df["clean lyrics"].apply(eval)
@@ -28,10 +33,6 @@ lyric_idf = compute_idf(inverted_lyric_index, n_docs)
 # build norms
 doc_norms = compute_doc_norms(inverted_lyric_index, lyric_idf, n_docs)
 
-
-# ROOT_PATH for linking with all your files.
-# Feel free to use a config.py or settings.py with a global export variable
-os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..", os.curdir))
 
 # These are the DB credentials for your OWN MySQL
 # Don't worry about the deployment credentials, those are fixed
