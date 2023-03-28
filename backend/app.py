@@ -5,7 +5,6 @@ from flask_cors import CORS
 from helpers.MySQLDatabaseHandler import MySQLDatabaseHandler
 
 from cosine_sim import *
-import csv
 import pandas as pd
 from nltk.tokenize import TreebankWordTokenizer
 import math
