@@ -30,7 +30,7 @@ lyric_idf = compute_idf(inverted_lyric_index, n_docs)
 doc_norms = compute_doc_norms(inverted_lyric_index, lyric_idf, n_docs)
 
 
-# ROOT_PATH for linking with all your files. 
+# ROOT_PATH for linking with all your files.
 # Feel free to use a config.py or settings.py with a global export variable
 os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..", os.curdir))
 
@@ -38,7 +38,7 @@ os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..", os.curdir))
 # Don't worry about the deployment credentials, those are fixed
 # You can use a different DB name if you want to
 MYSQL_USER = "root"
-MYSQL_USER_PASSWORD = "mysql"
+MYSQL_USER_PASSWORD = ""
 MYSQL_PORT = 3306
 MYSQL_DATABASE = "kardashiandb"
 
@@ -55,6 +55,8 @@ CORS(app)
 # Sample search, the LIKE operator in this case is hard-coded,
 # but if you decide to use SQLAlchemy ORM framework,
 # there's a much better and cleaner way to do this
+
+
 @app.route('/get_output/<movie>')
 def sql_search(movie):
     movie_lower = movie.lower()
@@ -69,19 +71,20 @@ def sql_search(movie):
         target_movie = matching_movies.iloc[0]
         movie_tokens = target_movie['tokens']
         movie_about = target_movie['about']
-        
+
         ranked_cosine_score = index_search(
             movie_about.lower(),
             inverted_lyric_index,
             lyric_idf,
             doc_norms
-            )
-        
+        )
+
         first_25 = ranked_cosine_score[:25]
         first_25_index = [ind for _, ind in first_25]
         first_25_songs = songs_df.iloc[first_25_index].to_dict('index')
         song_list = result_to_json(first_25_songs)
         return json.dumps(song_list)
+
 
 MOVIEGENRELIST = ["Action", "Adventure", "Comedy", "Drama",
                   "Fantasy", "Horror", "Romance", "Sci-fi", "Thriller", "Other"]
@@ -97,4 +100,5 @@ def episodes_search():
     text = request.args.get("title")
     return sql_search(text)
 
-app.run(debug=True)
+
+#app.run(debug=True)
