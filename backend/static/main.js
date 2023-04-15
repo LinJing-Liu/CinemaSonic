@@ -55,10 +55,15 @@ function submit(e) {
     if (genre == 'Select a genre' || genre == "") {
       emptyGenreError.style.display = 'block';
     }
+    else {
+      emptyGenreError.style.display = 'none';
+    }
     if (title == "") {
       emptyTitleError.style.display = 'block';
     }
-    console.log("emptyyyyyy");
+    else {
+      emptyTitleError.style.display = 'none';
+    }
     reset()
     return
   }
@@ -135,6 +140,7 @@ function createSongCard(title, genre, duration, lyrics, features, id) {
   var durationText = minute + " minutes and " + Math.floor((duration - minute * 1000 * 60) / 1000) + " seconds";
   var infoCollapseId = "song-info-collapse-" + id;
   var lyricCollapseId = "song-lyric-collapse-" + id;
+  const featureText = featureToText(features)
 
   return `
     <div class="card">
@@ -150,16 +156,20 @@ function createSongCard(title, genre, duration, lyrics, features, id) {
         </button>
         <div class="collapse song-collapse" id=${infoCollapseId}>
           <div class="card card-body">
+            <p> ${featureText.danceability}</p>
             <div class="progress">
               <div class="progress-bar" role="progressbar" style="width: ${features.danceability * 100}%" aria-valuemin="0" aria-valuemax="1">
                 Danceability
               </div>
             </div>
+            <p> ${featureText.speechiness}</p>
             <div class="progress">
               <div class="progress-bar" role="progressbar" style="width: ${features.speechiness * 100}%" aria-valuemin="0" aria-valuemax="1">
                 Speechiness
               </div>
+              
             </div>
+            <p> ${featureText.acousticness}</p>
             <div class="progress">
               <div class="progress-bar" role="progressbar" style="width: ${features.acousticness * 100}%" aria-valuemin="0" aria-valuemax="1">
                 Acousticness
@@ -197,6 +207,32 @@ function toggleCollapseText() {
     toggleButton.innerHTML = "Show";
   }
 }
+
+function featureToText(features) {
+  let featureText = {}
+
+  if (features.danceability < .5) {
+    featureText["danceability"] = "low danceability (score = " + Math.round(features.danceability * 100) + "%)"
+  }
+  else {
+    featureText["danceability"] = "high danceability (score = " + Math.round(features.danceability * 100) + "%)"
+  }
+  if (features.speechiness < .5) {
+    featureText["speechiness"] = "instrumental (score = " + Math.round(features.speechiness * 100) + "%)"
+  }
+  else {
+    featureText["speechiness"] = "lyrical (score = " + Math.round(features.speechiness * 100) + "%)"
+  }
+  if (features.acousticness < .5) {
+    featureText["acousticness"] = "not acoustic (score = " + Math.round(features.acousticness * 100) + "%)"
+  }
+  else {
+    featureText["acousticness"] = "very acoustic (score = " + Math.round(features.acousticness * 100) + "%)"
+  }
+  return featureText
+
+}
+
 
 function reset() {
   document.getElementById("output").innerHTML = "";
