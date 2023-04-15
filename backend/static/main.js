@@ -76,44 +76,26 @@ function submit(e) {
   //     displayOutput(data);
   //   })
 
-  var songList = [
-    {
-      title: "7 Years",
-      genre: "Pop",
-      duration: 237300,
-      lyrics: "It's been seven years down the road",
-      features: { danceability: 5.66, speechiness: 23, acousticness: 56 }
-    },
-    {
-      title: "6 Years",
-      genre: "Pop",
-      duration: 237300,
-      lyrics: "It's been six years down the road",
-      features: { danceability: 53.66, speechiness: 13, acousticness: 60 }
-    },
-    {
-      title: "5 Years",
-      genre: "Pop",
-      duration: 256900,
-      lyrics: "It's been five years down the road",
-      features: { danceability: 56.6, speechiness: 43, acousticness: 26 }
-    },
-    {
-      title: "4 Years",
-      genre: "Pop",
-      duration: 247300,
-      lyrics: "It's been four years down the road",
-      features: { danceability: 86, speechiness: 43, acousticness: 96 }
-    }
-  ]
-
-  displayOutput(songList);
+  if (title == "") {
+    title = "a";
+  }
+  fetch("/get_output/" + title)
+    .then((response) => response.json())
+    .then((data) => {
+      reset();
+      displayOutput(data);
+    })
 }
-
-
 
 function displayOutput(songList) {
   var output = document.getElementById("output");
+  if (songList.length == 0) {
+    var noOutput = document.createElement("div");
+    noOutput.innerHTML = "Sorry, we cannot find any relevant result.";
+    output.appendChild(noOutput);
+    return;
+  }
+
   var rowElements = [];
   var cardElements = [];
   var id = 0;
@@ -169,17 +151,17 @@ function createSongCard(title, genre, duration, lyrics, features, id) {
         <div class="collapse song-collapse" id=${infoCollapseId}>
           <div class="card card-body">
             <div class="progress">
-              <div class="progress-bar" role="progressbar" style="width: ${features.danceability}%" aria-valuemin="0" aria-valuemax="1">
+              <div class="progress-bar" role="progressbar" style="width: ${features.danceability * 100}%" aria-valuemin="0" aria-valuemax="1">
                 Danceability
               </div>
             </div>
             <div class="progress">
-              <div class="progress-bar" role="progressbar" style="width: ${features.speechiness}%" aria-valuemin="0" aria-valuemax="1">
+              <div class="progress-bar" role="progressbar" style="width: ${features.speechiness * 100}%" aria-valuemin="0" aria-valuemax="1">
                 Speechiness
               </div>
             </div>
             <div class="progress">
-              <div class="progress-bar" role="progressbar" style="width: ${features.acousticness}%" aria-valuemin="0" aria-valuemax="1">
+              <div class="progress-bar" role="progressbar" style="width: ${features.acousticness * 100}%" aria-valuemin="0" aria-valuemax="1">
                 Acousticness
               </div>
             </div>

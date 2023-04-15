@@ -4,15 +4,41 @@ from flask import Flask, render_template, request
 from flask_cors import CORS
 from helpers.MySQLDatabaseHandler import MySQLDatabaseHandler
 
+from cosine_sim import *
+import pandas as pd
+from nltk.tokenize import TreebankWordTokenizer
+import math
+
 # ROOT_PATH for linking with all your files.
 # Feel free to use a config.py or settings.py with a global export variable
 os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..", os.curdir))
+print(os.environ['ROOT_PATH'])
+
+# precompute inverted index and idf
+pd.set_option('max_colwidth', 600)
+songs_df = pd.read_csv("clean_song_dataset.csv")
+movies_df = pd.read_csv("clean_movie_dataset.csv")
+
+# extract lyrics and movie tokens as list of strings
+songs_df['tokens'] = songs_df["clean lyrics"].apply(eval)
+movies_df['tokens'] = movies_df["clean about"].apply(eval)
+
+# build inverted index of song lyrics
+inverted_lyric_index = build_inverted_index(songs_df['tokens'])
+
+# build idf
+n_docs = songs_df.shape[0]
+lyric_idf = compute_idf(inverted_lyric_index, n_docs)
+
+# build norms
+doc_norms = compute_doc_norms(inverted_lyric_index, lyric_idf, n_docs)
+
 
 # These are the DB credentials for your OWN MySQL
 # Don't worry about the deployment credentials, those are fixed
 # You can use a different DB name if you want to
 MYSQL_USER = "root"
-MYSQL_USER_PASSWORD = "Harim1004!"
+MYSQL_USER_PASSWORD = ""
 MYSQL_PORT = 3306
 MYSQL_DATABASE = "kardashiandb"
 
@@ -31,11 +57,33 @@ CORS(app)
 # there's a much better and cleaner way to do this
 
 
-def sql_search(episode):
-    query_sql = f"""SELECT * FROM episodes WHERE LOWER( title ) LIKE '%%{episode.lower()}%%' limit 10"""
-    keys = ["id", "title", "year"]
-    data = mysql_engine.query_selector(query_sql)
-    return json.dumps([dict(zip(keys, i)) for i in data])
+@app.route('/get_output/<movie>')
+def sql_search(movie):
+    movie_lower = movie.lower()
+    # 1. find matching movies in the database
+    matching_movies = movies_df[movies_df['title'].str.lower() == movie_lower]
+
+    # 2. If the movie has no matches:
+    if matching_movies.shape[0] == 0:
+        return json.dumps([])
+    else:
+        # 3. If the movie has matches:
+        target_movie = matching_movies.iloc[0]
+        movie_tokens = target_movie['tokens']
+        movie_about = target_movie['about']
+
+        ranked_cosine_score = index_search(
+            movie_about.lower(),
+            inverted_lyric_index,
+            lyric_idf,
+            doc_norms
+        )
+
+        first_25 = ranked_cosine_score[:25]
+        first_25_index = [ind for _, ind in first_25]
+        first_25_songs = songs_df.iloc[first_25_index].to_dict('index')
+        song_list = result_to_json(first_25_songs)
+        return json.dumps(song_list)
 
 
 MOVIEGENRELIST = ["Action", "Adventure", "Comedy", "Drama",
@@ -53,10 +101,4 @@ def episodes_search():
     return sql_search(text)
 
 
-@app.route("/sample_output")
-def output():
-    return render_template('output.html', title="sample output")
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
+#app.run(debug=True)
