@@ -2,18 +2,14 @@
 function answerBoxTemplate(title, titleDesc) {
   return `<div class=''>
       <h3 class='episode-title'>${title}</h3>
-      <p class='episode-director'>${titleDesc}</p>
   </div>`
 }
 
 function sendFocusTitleIn() {
   document.getElementById("title-in").focus()
 }
-function sendFocusDirectorIn() {
-  document.getElementById("director-in").focus()
-}
-function sendFocusActorsIn() {
-  document.getElementById("actors-in").focus()
+function sendFocusYearIn() {
+  document.getElementById("year-in").focus()
 }
 
 function filterText() {
@@ -44,17 +40,41 @@ function showOtherInput() {
 
 function submit(e) {
   e.preventDefault();
+
   var title = document.getElementById("title-in").value;
-  var director = document.getElementById("director-in").value;
-  var actors = document.getElementById("actors-in").value;
+  var year = document.getElementById("year-in").value;
   var genre = document.getElementById("genre-in").value;
-  console.log(genre);
+  var emptyTitleError = document.getElementById('empty-input-title-error');
+  var emptyGenreError = document.getElementById('empty-input-genre-error');
+
   if (genre == "Other") {
     genre = document.getElementById("other-movie-genre").value;
   }
-  outDict = { "Title": title, "Director": director, "Actors": actors, "Genre": genre };
+
+  if (genre == 'Select a genre' || genre == "" || title == "") {
+    if (genre == 'Select a genre' || genre == "") {
+      emptyGenreError.style.display = 'block';
+    }
+    if (title == "") {
+      emptyTitleError.style.display = 'block';
+    }
+    console.log("emptyyyyyy");
+    reset()
+    return
+  }
+  else {
+    emptyGenreError.style.display = 'none';
+    emptyTitleError.style.display = 'none';
+  }
+  outDict = { "Title": title, "Year": year, "Genre": genre };
   //send outDict somewhere... where?
   console.log(outDict);
+  // fetch("/get_output/" + title)
+  //   .then((response) => response.json())
+  //   .then((data) => {
+  //     reset();
+  //     displayOutput(data);
+  //   })
 
   var songList = [
     {

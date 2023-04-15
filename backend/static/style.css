@@ -13,8 +13,7 @@
 .input-movie,
 .input-desc,
 .form-control.input-genre,
-.input-director,
-.input-actors {
+.input-year {
     border-radius: 50px;
     border: 2px solid #AB987A;
     display: flex;
@@ -38,8 +37,7 @@
 
 .input-movie input,
 .input-desc input,
-.input-director input,
-.input-actors input {
+.input-year input {
     width: 100%;
     margin-left: 10px;
     font-size: 16px;
@@ -123,6 +121,12 @@ button {
     margin-top: 30px;
     float: right;
     margin-bottom: 30px;
+}
+
+
+.empty-input-error {
+    color: red;
+    display: none;
 }
 
 #output {
