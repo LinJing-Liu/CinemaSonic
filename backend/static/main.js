@@ -59,13 +59,13 @@ function submit(e) {
   if (title == "") {
     title = "a";
   }
-  if (director == ""){
+  if (director == "") {
     director = "a"
   }
-  if (actors == ""){
+  if (actors == "") {
     actors = "a"
   }
-  if (genre == ""){
+  if (genre == "") {
     genre = "a"
   }
   fetch("/get_output/" + title + "/" + director + "/" + actors + "/" + genre)
@@ -161,7 +161,7 @@ function createSongCard(title, genre, duration, lyrics, features, id) {
           Song Lyrics
         </button>
         <div class="collapse song-collapse" id=${lyricCollapseId}>
-          <div class="card card-body song-lyric">${lyrics}</div>
+          <div class="card card-body song-lyric"><pre>${lyrics}</pre></div>
         </div>
       </div>
     </div>
