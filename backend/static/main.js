@@ -8,9 +8,9 @@ function answerBoxTemplate(title, titleDesc) {
 function sendFocusTitleIn() {
   document.getElementById("title-in").focus()
 }
-function sendFocusYearIn() {
-  document.getElementById("year-in").focus()
-}
+// function sendFocusYearIn() {
+//   document.getElementById("year-in").focus()
+// }
 
 function sendFocusDirectorIn() {
   document.getElementById("director-in").focus()
@@ -46,7 +46,7 @@ function submit(e) {
   e.preventDefault();
 
   var title = document.getElementById("title-in").value;
-  var year = document.getElementById("year-in").value;
+  //var year = document.getElementById("year-in").value;
   var director = document.getElementById("director-in").value;
   var genre = document.getElementById("genre-in").value;
   var emptyTitleError = document.getElementById('empty-input-title-error');
@@ -101,7 +101,7 @@ function submit(e) {
     emptyGenreError.style.display = 'none';
     emptyTitleError.style.display = 'none';
   }
-  outDict = { "Title": title, "Year": year, "Director": director, "Genre": genre, "songPopularity": songPopularityFilter, "songLength": songLengthFilter, "songGenres": songGenreFilter };
+  outDict = { "Title": title, /*"Year": year,*/ "Director": director, "Genre": genre, "songPopularity": songPopularityFilter, "songLength": songLengthFilter, "songGenres": songGenreFilter };
   //send outDict somewhere... where?
   console.log(outDict);
   // fetch("/get_output/" + title)
@@ -123,7 +123,7 @@ function submit(e) {
   if (genre == "") {
     genre = "a"
   }
-  console.log(genre)
+  //console.log(genre)
   fetch("/get_output/" + title + "/" + director + "/" + genre)
     .then((response) => response.json())
     .then((data) => {
@@ -245,14 +245,14 @@ function toggleAllGenreCheck() {
 
   for (var check of checkboxes) {
     if (!(check.checked)) {
-      console.log("ffff")
+      //console.log("ffff")
       checkValue = false
     }
   }
-  console.log(checkValue)
+  //console.log(checkValue)
   allChecked.checked = checkValue
-  console.log("allchecked is check: ", allChecked.checked)
-  console.log("elt is check: ", document.getElementById("all").checked)
+  //console.log("allchecked is check: ", allChecked.checked)
+  //console.log("elt is check: ", document.getElementById("all").checked)
 }
 
 function toggleCollapseText() {
