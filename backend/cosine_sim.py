@@ -255,8 +255,8 @@ def result_to_json(first_25_songs):
     song_list = []
     for query_result in first_25_songs.values():
         song = {}
-        song['title'] = query_result['song_name']
-        song['genre'] = query_result['genre']
+        song['title'] = query_result['track_name']
+        song['genre'] = query_result['playlist_genre']
         song['duration'] = query_result['duration_ms']
         song['lyrics'] = query_result['lyrics']
         features = {}
