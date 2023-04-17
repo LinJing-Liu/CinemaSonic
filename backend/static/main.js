@@ -12,6 +12,10 @@ function sendFocusYearIn() {
   document.getElementById("year-in").focus()
 }
 
+function sendFocusDirectorIn() {
+  document.getElementById("director-in").focus()
+}
+
 function filterText() {
   document.getElementById("answer-box").innerHTML = ""
   console.log(document.getElementById("title-in").value)
@@ -43,9 +47,35 @@ function submit(e) {
 
   var title = document.getElementById("title-in").value;
   var year = document.getElementById("year-in").value;
+  var director = document.getElementById("director-in").value;
   var genre = document.getElementById("genre-in").value;
   var emptyTitleError = document.getElementById('empty-input-title-error');
   var emptyGenreError = document.getElementById('empty-input-genre-error');
+
+  var songPopularityFilter = document.getElementById("popularity-range").value;
+  var songLengthFilter = document.getElementById("length-range").value;
+  var songGenreFilter = new Set();
+
+
+
+  var allSongGenresIds = []
+  var allSongGenres = []
+  for (var songGenreId of document.getElementsByClassName("music-genre")) {
+    allSongGenresIds.push(songGenreId.id)
+    allSongGenres.push(songGenreId.id.slice(0, -6))
+
+  }
+  if (document.getElementById('all').checked) {
+    songGenreFilter = allSongGenres
+  }
+  else {
+    for (let i = 0; i < allSongGenres.length; i++) {
+      if (document.getElementById(allSongGenresIds[i]).checked) {
+        songGenreFilter.add(allSongGenres[i])
+      }
+    }
+  }
+
 
   if (genre == "Other") {
     genre = document.getElementById("other-movie-genre").value;
@@ -71,7 +101,7 @@ function submit(e) {
     emptyGenreError.style.display = 'none';
     emptyTitleError.style.display = 'none';
   }
-  outDict = { "Title": title, "Year": year, "Genre": genre };
+  outDict = { "Title": title, "Year": year, "Director": director, "Genre": genre, "songPopularity": songPopularityFilter, "songLength": songLengthFilter, "songGenres": songGenreFilter };
   //send outDict somewhere... where?
   console.log(outDict);
   // fetch("/get_output/" + title)
@@ -156,23 +186,23 @@ function createSongCard(title, genre, duration, lyrics, features, id) {
         </button>
         <div class="collapse song-collapse" id=${infoCollapseId}>
           <div class="card card-body">
-            <p> ${featureText.danceability}</p>
+            <p> ${featureText.energy}</p>
             <div class="progress">
-              <div class="progress-bar" role="progressbar" style="width: ${features.danceability * 100}%" aria-valuemin="0" aria-valuemax="1">
-                Danceability
+              <div class="progress-bar" role="progressbar" style="width: ${features.energy * 100}%" aria-valuemin="0" aria-valuemax="1">
+                Energy
               </div>
             </div>
-            <p> ${featureText.speechiness}</p>
+            <p> ${featureText.valence}</p>
             <div class="progress">
-              <div class="progress-bar" role="progressbar" style="width: ${features.speechiness * 100}%" aria-valuemin="0" aria-valuemax="1">
-                Speechiness
+              <div class="progress-bar" role="progressbar" style="width: ${features.valence * 100}%" aria-valuemin="0" aria-valuemax="1">
+                Valence
               </div>
               
             </div>
-            <p> ${featureText.acousticness}</p>
+            <p> ${featureText.instrumentalness}</p>
             <div class="progress">
-              <div class="progress-bar" role="progressbar" style="width: ${features.acousticness * 100}%" aria-valuemin="0" aria-valuemax="1">
-                Acousticness
+              <div class="progress-bar" role="progressbar" style="width: ${features.instrumentalness * 100}%" aria-valuemin="0" aria-valuemax="1">
+                Instrumentalness
               </div>
             </div>
           </div>
@@ -197,6 +227,22 @@ function toggleGenreChecks() {
   for (var check of checkboxes) {
     check.checked = checkValue;
   }
+}
+function toggleAllGenreCheck() {
+  var checkboxes = document.getElementsByClassName("music-genre");
+  var allChecked = document.getElementById("all");
+  var checkValue = true
+
+  for (var check of checkboxes) {
+    if (!(check.checked)) {
+      console.log("ffff")
+      checkValue = false
+    }
+  }
+  console.log(checkValue)
+  allChecked.checked = checkValue
+  console.log("allchecked is check: ", allChecked.checked)
+  console.log("elt is check: ", document.getElementById("all").checked)
 }
 
 function toggleCollapseText() {
@@ -229,6 +275,26 @@ function featureToText(features) {
   else {
     featureText["acousticness"] = "very acoustic (score = " + Math.round(features.acousticness * 100) + "%)"
   }
+
+  if (features.instrumentalness < .5) {
+    console.log()
+    featureText["instrumentalness"] = "text-heavy (score = " + Math.round(features.instrumentalness * 100) + "%)"
+  }
+  else {
+    featureText["instrumentalness"] = "largely instrumental (score = " + Math.round(features.instrumentalness * 100) + "%)"
+  }
+  if (features.valence < .5) {
+    featureText["valence"] = "sad (score = " + Math.round(features.valence * 100) + "%)"
+  }
+  else {
+    featureText["valence"] = "happy (score = " + Math.round(features.valence * 100) + "%)"
+  }
+  if (features.energy < .5) {
+    featureText["energy"] = "low energy (score = " + Math.round(features.energy * 100) + "%)"
+  }
+  else {
+    featureText["energy"] = "high energy (score = " + Math.round(features.energy * 100) + "%)"
+  }
   return featureText
 
 }
@@ -242,6 +308,10 @@ function initialize() {
   document.getElementById("input-form").addEventListener('submit', submit);
   document.getElementById("input-form").addEventListener('reset', reset);
   document.getElementById("all").addEventListener('click', toggleGenreChecks);
+  for (var songGenreId of document.getElementsByClassName("music-genre")) {
+    songGenreId.addEventListener('click', toggleAllGenreCheck);
+  }
+  //document.getElementsByClassName("music-genre").addEventListener('click', toggleAllGenreCheck);
   document.getElementById("all").checked = true;
   document.getElementById("genreToggleButton").innerHTML = "Show";
   document.getElementById("genreToggleButton").addEventListener('click', toggleCollapseText);

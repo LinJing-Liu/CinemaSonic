@@ -86,8 +86,8 @@ def sql_search(movie):
         return json.dumps(song_list)
 
 
-MOVIEGENRELIST = ["Action", "Adventure", "Comedy", "Drama",
-                  "Fantasy", "Horror", "Romance", "Sci-fi", "Thriller", "Other"]
+MOVIEGENRELIST = ["Action", "Adventure", "Biography", "Comedy", "Drama", "Family",
+                  "Fantasy", "History", "Horror", "Mystery", "Romance", "Sci-fi", "Thriller", "Other"]
 
 
 @app.route("/")

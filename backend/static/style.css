@@ -13,7 +13,8 @@
 .input-movie,
 .input-desc,
 .form-control.input-genre,
-.input-year {
+.input-year,
+.input-director {
     border-radius: 50px;
     border: 2px solid #AB987A;
     display: flex;
@@ -38,7 +39,8 @@
 
 .input-movie input,
 .input-desc input,
-.input-year input {
+.input-year input,
+.input-director input {
     width: 100%;
     margin-left: 10px;
     font-size: 16px;

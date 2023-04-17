@@ -36,21 +36,27 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="inputGenre">Genre</label>
+                        <label for="inputGenre">Movie Genre</label>
                         <select class="form-control form-select" aria-label="Movie Genre Select" id="genre-in">
                             <option selected>Select a genre</option>
                             {% for i in movieGenres %}
                             <option>{{ i }}</option>
                             {% endfor %}
                         </select>
-                        <input type="text" class="form-control input-genre" placeholder="If other: specify movie genre"
-                            id="other-movie-genre">
+                        <input type="text" class="form-control input-genre"
+                            placeholder="If other: specify (one) movie genre" id="other-movie-genre">
                         <p class="empty-input-error" id="empty-input-genre-error">Please input the required field.</p>
                     </div>
                     <div class="form-group">
                         <label for="inputYear">Release Year</label>
                         <div class="input-year">
                             <input placeholder="(optional)" id="year-in">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputDirector">Director (full name)</label>
+                        <div class="input-director">
+                            <input placeholder="(optional)" id="director-in">
                         </div>
                     </div>
 
@@ -69,7 +75,7 @@
                             </div>
                             <div class="length-filter">
                                 <label for="length">Song length</label>
-                                <input type="range" min="1" max="3" value="2" class="slider" id="popularity-range">
+                                <input type="range" min="1" max="3" value="2" class="slider" id="length-range">
                                 <ul class="labels">
                                     <li>Short</li>
                                     <li>Anything</li>
