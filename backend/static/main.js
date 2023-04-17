@@ -114,16 +114,17 @@ function submit(e) {
   if (title == "") {
     title = "a";
   }
-  if (director == ""){
+  if (director == "") {
     director = "a"
   }
-  if (actors == ""){
-    actors = "a"
-  }
-  if (genre == ""){
+  // if (actors == "") {
+  //   actors = "a"
+  // }
+  if (genre == "") {
     genre = "a"
   }
-  fetch("/get_output/" + title + "/" + director + "/" + actors + "/" + genre)
+  console.log(genre)
+  fetch("/get_output/" + title + "/" + director + "/" + genre)
     .then((response) => response.json())
     .then((data) => {
       reset();

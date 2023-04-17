@@ -10,7 +10,6 @@ import nltk
 from nltk.tokenize import TreebankWordTokenizer
 
 
-
 # ROOT_PATH for linking with all your files.
 # Feel free to use a config.py or settings.py with a global export variable
 os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..", os.curdir))
@@ -59,13 +58,13 @@ CORS(app)
 # there's a much better and cleaner way to do this
 
 
-@app.route('/get_output/<movie>/<director>/<actors>/<genre>')
-def sql_search(movie,director,actors,genre):
+@app.route('/get_output/<movie>/<director>/<genre>')
+def sql_search(movie, director, genre):
     movie_lower = movie.lower()
     director = director.lower()
-    actors = actors.lower()
+    # actors = actors.lower()
     genre = genre.lower()
-    
+
     # 1. find matching movies in the database
     dataset_titles = movies_df['title']
     matching_movies = movies_df[dataset_titles == movie_lower]
@@ -73,50 +72,55 @@ def sql_search(movie,director,actors,genre):
     # Return no result found if the movie title input is empty
     if (movie_lower == 'a'):
         return json.dumps([])
-    
+
     # 2. If the movie has no matches:
     if matching_movies.shape[0] == 0:
-        
-        edit_dist = np.array([nltk.edit_distance(movie_lower,title) for title in dataset_titles])
+
+        edit_dist = np.array([nltk.edit_distance(movie_lower, title)
+                             for title in dataset_titles])
 
         if np.min(edit_dist) <= 5:
             matched_title = dataset_titles[np.argmin(edit_dist)]
-            return result_json(movies_df[dataset_titles == matched_title]) 
-        
+            return result_json(movies_df[dataset_titles == matched_title])
+
         else:
             if genre != "select a genre":
-                dataset_genres = set([g for lst in movies_df['genre'] for g in lst])
-                edit_dist_genres = np.array([nltk.edit_distance(genre,genres) for genres in dataset_genres])
+                dataset_genres = set(
+                    [g for lst in movies_df['genre'] for g in lst])
+                edit_dist_genres = np.array(
+                    [nltk.edit_distance(genre, genres) for genres in dataset_genres])
                 genre = dataset_genres[np.argmin(edit_dist_genres)]
-                               
+
                 if director == 'a':
                     genres_of_movies = movies_df['genre']
                     bool_lst = [genre in lst for lst in genres_of_movies]
-                    
+
                     return result_json(movies_df[bool_lst])
-                
+
                 else:
                     dataset_directors = movies_df['director']
-                    edit_dist_directors = np.array([nltk.edit_distance(director,directors) for directors in dataset_directors])
-                    director = dataset_directors[np.argmin(edit_dist_directors)]
-                    
+                    edit_dist_directors = np.array(
+                        [nltk.edit_distance(director, directors) for directors in dataset_directors])
+                    director = dataset_directors[np.argmin(
+                        edit_dist_directors)]
+
                     matched_director = movies_df[dataset_directors == director]
-                    
+
                     # if matched_director.empty:
                     #     genres_of_movies = movies_df['genre'].apply(lambda x: x.lower().split(',') if type(x)!= float else str(x))
                     #     bool_lst = [genre in lst for lst in genres_of_movies]
-                        
+
                     #     return result_json(movies_df[bool_lst])
-                    
+
                     genres_of_director_movies = matched_director['genre']
-                    bool_lst = [genre in lst for lst in genres_of_director_movies]
-                    
+                    bool_lst = [
+                        genre in lst for lst in genres_of_director_movies]
+
                     if sum(bool_lst) == 0:
                         return result_json(matched_director)
-                     
+
                     return result_json(matched_director[bool_lst])
 
-            
             else:
                 if director == 'a':
                     matched_title = dataset_titles[np.argmin(edit_dist)]
@@ -124,15 +128,15 @@ def sql_search(movie,director,actors,genre):
 
                 else:
                     dataset_directors = movies_df['director']
-                    edit_dist_directors = np.array([nltk.edit_distance(director,directors) for directors in dataset_directors])
-                    director = dataset_directors[np.argmin(edit_dist_directors)]
+                    edit_dist_directors = np.array(
+                        [nltk.edit_distance(director, directors) for directors in dataset_directors])
+                    director = dataset_directors[np.argmin(
+                        edit_dist_directors)]
                     return result_json(movies_df[dataset_directors == director])
-                    
-                
-                
+
         return json.dumps([])
     else:
-        
+
         return result_json(matching_movies)
         # # 3. If the movie has matches:
         # target_movie = matching_movies.iloc[0]
@@ -170,8 +174,7 @@ def result_json(matching_movies):
     first_25_songs = songs_df.iloc[first_25_index].to_dict('index')
     song_list = result_to_json(first_25_songs)
     return json.dumps(song_list)
-    
-    
+
 
 MOVIEGENRELIST = ["Action", "Adventure", "Biography", "Comedy", "Drama", "Family",
                   "Fantasy", "History", "Horror", "Mystery", "Romance", "Sci-fi", "Thriller", "Other"]
