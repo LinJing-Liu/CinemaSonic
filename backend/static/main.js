@@ -222,7 +222,7 @@ function createSongCard(title, genre, duration, lyrics, features, id) {
           Song Lyrics
         </button>
         <div class="collapse song-collapse" id=${lyricCollapseId}>
-          <div class="card card-body song-lyric"><pre>${lyrics}</pre></div>
+          <div class="card card-body song-lyric">${lyrics}</div>
         </div>
       </div>
     </div>
