@@ -85,10 +85,15 @@ def sql_search(movie, director, genre):
 
         else:
             if genre != "select a genre":
-                dataset_genres = set(
-                    [g for lst in movies_df['genre'] for g in lst])
+                dataset_genres = set()
+                for lst in movies_df['genre']:
+                    if type(lst) != float:
+                        for g in lst:
+                            dataset_genres.add(g)
+                    
+
                 edit_dist_genres = np.array(
-                    [nltk.edit_distance(genre, genres) if genres !="nan" else 1000 for genres in dataset_genres])
+                    [nltk.edit_distance(genre, genres) for genres in dataset_genres])
                 genre = dataset_genres[np.argmin(edit_dist_genres)]
 
                 if director == 'a':
