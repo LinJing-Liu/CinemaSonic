@@ -90,7 +90,8 @@ def sql_search(movie, director, genre):
                     if type(lst) != float:
                         for g in lst:
                             dataset_genres.add(g)
-                    
+                
+                dataset_genres = list(dataset_genres)
 
                 edit_dist_genres = np.array(
                     [nltk.edit_distance(genre, genres) for genres in dataset_genres])
@@ -98,7 +99,7 @@ def sql_search(movie, director, genre):
 
                 if director == 'a':
                     genres_of_movies = movies_df['genre']
-                    bool_lst = [genre in lst for lst in genres_of_movies]
+                    bool_lst = [genre in lst if type(lst) != float else False for lst in genres_of_movies ]
 
                     return result_json(movies_df[bool_lst])
 
@@ -119,7 +120,7 @@ def sql_search(movie, director, genre):
 
                     genres_of_director_movies = matched_director['genre']
                     bool_lst = [
-                        genre in lst for lst in genres_of_director_movies]
+                        genre in lst if type(lst) != float else False for lst in genres_of_director_movies]
 
                     if sum(bool_lst) == 0:
                         return result_json(matched_director)
