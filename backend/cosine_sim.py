@@ -4,6 +4,7 @@ import csv
 import pandas as pd
 from nltk.tokenize import TreebankWordTokenizer
 import math
+import json
 
 treebank_tokenizer = TreebankWordTokenizer()
 
@@ -258,7 +259,14 @@ def result_to_json(first_25_songs):
         song['title'] = query_result['track_name']
         song['genre'] = query_result['playlist_genre']
         song['duration'] = query_result['duration_ms']
-        song['lyrics'] = query_result['lyrics']
+
+        # process lyrics to a long string with new lines after each lyric line
+        lyrics = query_result['lyrics']
+        lyrics = lyrics[1:-1] # brute force way to remove [] on both sides
+        lyrics = [l.strip()[1:-1] for l in  lyrics.split(',')] # remove beginning and ending quotations marks in the strings
+        song['lyrics'] = '\n'.join(lyrics)
+
+        song['popularity'] = query_result['track_popularity']
         features = {}
         features['danceability'] = query_result['danceability']
         features['energy'] = query_result['energy']
@@ -277,8 +285,8 @@ def result_to_json(first_25_songs):
 
 # # precompute inverted index and idf
 # pd.set_option('max_colwidth', 600)
-# songs_df = pd.read_csv("../clean_song_dataset.csv")
-# movies_df = pd.read_csv("../clean_movie_dataset.csv")
+# songs_df = pd.read_csv("clean_spotify.csv")
+# movies_df = pd.read_csv("clean_movie_dataset.csv")
 
 # # extract lyrics and movie tokens as list of strings
 # songs_df['tokens'] = songs_df["clean lyrics"].apply(eval)
@@ -313,7 +321,7 @@ def result_to_json(first_25_songs):
 # # return the values as a list of dictionaries
 # song_list = result_to_json(first_25_songs)
 
-# print(song_list[0])
+# print(song_list[0]['lyrics'])
 
 
 
