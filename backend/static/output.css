@@ -20,6 +20,7 @@
   box-shadow: 2px 2px 4px #767676;
   border: 2px solid #AB987A;
   font-weight: 100 !important;
+  text-transform: capitalize;
 }
 
 .card .btn,
@@ -69,4 +70,9 @@
 .collapse {
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+.song-lyric {
+  white-space: pre-wrap;
+  text-transform: none !important;
 }

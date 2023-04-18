@@ -104,12 +104,6 @@ function submit(e) {
   outDict = { "Title": title, /*"Year": year,*/ "Director": director, "Genre": genre, "songPopularity": songPopularityFilter, "songLength": songLengthFilter, "songGenres": songGenreFilter };
   //send outDict somewhere... where?
   console.log(outDict);
-  // fetch("/get_output/" + title)
-  //   .then((response) => response.json())
-  //   .then((data) => {
-  //     reset();
-  //     displayOutput(data);
-  //   })
 
   if (title == "") {
     title = "a";
@@ -128,17 +122,23 @@ function submit(e) {
     .then((response) => response.json())
     .then((data) => {
       reset();
-      displayOutput(data);
+      displayOutput(data, songPopularityFilter);
     })
 }
 
-function displayOutput(songList) {
+function displayOutput(songList, songPopularityFilter) {
   var output = document.getElementById("output");
   if (songList.length == 0) {
     var noOutput = document.createElement("div");
     noOutput.innerHTML = "Sorry, we cannot find any relevant result.";
     output.appendChild(noOutput);
     return;
+  }
+
+  if (songPopularityFilter == 1) {
+    songList.sort((a, b) => a.popularity - b.popularity);
+  } else if (songPopularityFilter == 3) {
+    songList.sort((a, b) => b.popularity - a.popularity);
   }
 
   var rowElements = [];
@@ -148,7 +148,7 @@ function displayOutput(songList) {
   for (var song of songList) {
     var c = document.createElement("div");
     c.className = "col-sm-4";
-    c.innerHTML = createSongCard(song.title, song.genre, song.duration, song.lyrics, song.features, id);
+    c.innerHTML = createSongCard(song.title, song.genre, song.duration, song.lyrics, song.features, song.popularity, id);
     cardElements.push(c);
     id++;
   }
@@ -175,7 +175,7 @@ function displayOutput(songList) {
   }
 }
 
-function createSongCard(title, genre, duration, lyrics, features, id) {
+function createSongCard(title, genre, duration, lyrics, features, popularity, id) {
   var minute = Math.floor(duration / 1000 / 60);
   var durationText = minute + " minutes and " + Math.floor((duration - minute * 1000 * 60) / 1000) + " seconds";
   var infoCollapseId = "song-info-collapse-" + id;
@@ -189,6 +189,8 @@ function createSongCard(title, genre, duration, lyrics, features, id) {
         <h5 class="song-info">
           <span class="genre">${genre} | </span>
           <span class="duration">${durationText}</span>
+          <br />
+          <span class="popularity">Popularity: ${popularity}</span>
         </h5>
         <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#${infoCollapseId}"
           aria-expanded="false" aria-controls=${infoCollapseId}>
