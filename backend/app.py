@@ -90,7 +90,7 @@ def sql_search(movie, director, genre):
                     if type(lst) != float:
                         for g in lst:
                             dataset_genres.add(g)
-                
+
                 dataset_genres = list(dataset_genres)
 
                 edit_dist_genres = np.array(
@@ -99,7 +99,8 @@ def sql_search(movie, director, genre):
 
                 if director == 'a':
                     genres_of_movies = movies_df['genre']
-                    bool_lst = [genre in lst if type(lst) != float else False for lst in genres_of_movies ]
+                    bool_lst = [genre in lst if type(
+                        lst) != float else False for lst in genres_of_movies]
 
                     return result_json(movies_df[bool_lst])
 
@@ -197,4 +198,4 @@ def episodes_search():
     return sql_search(text)
 
 
-app.run(debug=True)
+# app.run(debug=True)
