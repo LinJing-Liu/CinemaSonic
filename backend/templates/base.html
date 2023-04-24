@@ -27,7 +27,7 @@
             <div class="input-boxes">
                 <form id="input-form">
                     <div class="form-group">
-                        <label for="inputMovie">Movie Title</label>
+                        <label for="inputMovie">Movie Title*</label>
                         <div class="input-movie">
                             <img src="{{ url_for('static', filename='images/mag.png') }}" />
                             <input placeholder="Enter the movie title (ex: The Matrix)" id="title-in">
@@ -36,7 +36,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="inputGenre">Movie Genre</label>
+                        <label for="inputGenre">Movie Genre*</label>
                         <select class="form-control form-select" aria-label="Movie Genre Select" id="genre-in">
                             <option selected>Select a genre</option>
                             {% for i in movieGenres %}
@@ -65,7 +65,7 @@
                     <div class="form-group">
                         <div class="filters">
                             <div class="pop-filter">
-                                <label for="popularity">Popularity</label>
+                                <label for="popularity">Song Popularity</label>
                                 <input type="range" min="1" max="3" value="2" class="slider" id="popularity-range">
                                 <ul class="labels">
                                     <li>Niche only</li>
@@ -88,6 +88,7 @@
                                 <button class="btn btn-primary" type="button" data-toggle="collapse"
                                     data-target="#songGenreCollapse" aria-expanded="false"
                                     aria-controls="songGenreCollapse" id="genreToggleButton"></button>
+
                                 <div class="collapse" id="songGenreCollapse">
                                     <ul class="checklist">
                                         <li>
@@ -95,13 +96,13 @@
                                             <label for="all">All</label>
                                         </li>
                                         <li>
-                                            <input type="checkbox" class="music-genre" id="country-genre" checked>
-                                            <label for="country">Country</label>
+                                            <input type="checkbox" class="music-genre" id="edm-genre" checked>
+                                            <label for="edm">EDM</label>
                                         </li>
 
                                         <li>
-                                            <input type="checkbox" class="music-genre" id="hiphop-genre" checked>
-                                            <label for="hiphop">Hip hop</label>
+                                            <input type="checkbox" class="music-genre" id="latin-genre" checked>
+                                            <label for="latin">Latin</label>
                                         </li>
                                         <li>
                                             <input type="checkbox" class="music-genre" id="pop-genre" checked>
@@ -125,17 +126,34 @@
                             </div>
                         </div>
                     </div>
+                    <div class="requiredMessage">
+                        Fields marked with * are required.
+                    </div>
                     <div class="formButton">
+                        <button class="btn btn-primary" type="button" data-toggle="collapse"
+                            data-target="#explainCollapse" aria-expanded="false" aria-controls="explainCollapse"
+                            id="explainToggleButton">Show how we get your results</button>
                         <button type="submit" class="btn btn-primary" id="submitButton" onclick="submit">Find me
                             songs!</button>
                         <button type="reset" class="btn btn-primary" id="resetButton" onclick="reset">Reset
                             Form</button>
 
-                    </div>
-                </form>
-            </div>
-        </div>
 
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+        <div class="explanation" id="explanation">
+            To find the perfect songs for you, we first scour our database for your chosen movie. If a close match
+            cannot be found, we then rely on the input genre as well the director (if provided) to find the most similar
+            movie. From there, we find the best-matching songs by comparing the movie's description with lyrics, as well
+            as comparing the outputs of similar movies. Then, we filter the results to match the criteria you have
+            selected (ex: niche, short, edm songs) and return the best-fitting songs for your listening enjoyment!
+        </div>
         <div id="output">
         </div>
 </body>
