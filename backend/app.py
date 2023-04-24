@@ -17,7 +17,7 @@ print(os.environ['ROOT_PATH'])
 
 # precompute inverted index and idf
 pd.set_option('max_colwidth', 600)
-songs_df = pd.read_csv("clean_song_dataset.csv")
+songs_df = pd.read_csv("clean_spotify.csv")
 movies_df = pd.read_csv("clean_movie_dataset.csv")
 
 # extract lyrics and movie tokens as list of strings
@@ -85,15 +85,22 @@ def sql_search(movie, director, genre):
 
         else:
             if genre != "select a genre":
-                dataset_genres = set(
-                    [g for lst in movies_df['genre'] for g in lst])
+                dataset_genres = set()
+                for lst in movies_df['genre']:
+                    if type(lst) != float:
+                        for g in lst:
+                            dataset_genres.add(g)
+
+                dataset_genres = list(dataset_genres)
+
                 edit_dist_genres = np.array(
                     [nltk.edit_distance(genre, genres) for genres in dataset_genres])
                 genre = dataset_genres[np.argmin(edit_dist_genres)]
 
                 if director == 'a':
                     genres_of_movies = movies_df['genre']
-                    bool_lst = [genre in lst for lst in genres_of_movies]
+                    bool_lst = [genre in lst if type(
+                        lst) != float else False for lst in genres_of_movies]
 
                     return result_json(movies_df[bool_lst])
 
@@ -114,7 +121,7 @@ def sql_search(movie, director, genre):
 
                     genres_of_director_movies = matched_director['genre']
                     bool_lst = [
-                        genre in lst for lst in genres_of_director_movies]
+                        genre in lst if type(lst) != float else False for lst in genres_of_director_movies]
 
                     if sum(bool_lst) == 0:
                         return result_json(matched_director)
@@ -191,4 +198,4 @@ def episodes_search():
     return sql_search(text)
 
 
-app.run(debug=True)
+# app.run(debug=True)
