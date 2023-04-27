@@ -198,4 +198,4 @@ def episodes_search():
     return sql_search(text)
 
 
-# app.run(debug=True)
+app.run(debug=True)

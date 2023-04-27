@@ -113,11 +113,42 @@ button {
     background-color: #ff533D;
 }
 
+#explainButton {
+    background-color: rgb(34, 34, 117);
+}
+
 #genreToggleButton {
     background-color: #0F1626;
     color: white;
     margin-left: 15px;
     border: 1px solid white !important;
+    width: 60px;
+}
+
+#explainToggleButton {
+    background-color: #96743e;
+    margin-left: 15px;
+    color: black;
+
+    margin-right: 50px;
+    width: 230px;
+}
+
+.explanation {
+    background-color: #193984;
+    color: black;
+    border: 5px solid #4f3409 !important;
+
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-direction: column;
+    background-color: #96743e;
+    width: 600px;
+    padding: 15px;
+    margin-bottom: 30px;
+    display: none;
+
 }
 
 .formButton {
