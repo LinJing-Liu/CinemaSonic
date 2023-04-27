@@ -5,6 +5,7 @@ from flask_cors import CORS
 from helpers.MySQLDatabaseHandler import MySQLDatabaseHandler
 
 from cosine_sim import *
+from svd import *
 import pandas as pd
 import nltk
 from nltk.tokenize import TreebankWordTokenizer
@@ -34,6 +35,8 @@ lyric_idf = compute_idf(inverted_lyric_index, n_docs)
 # build norms
 doc_norms = compute_doc_norms(inverted_lyric_index, lyric_idf, n_docs)
 
+# build movie feature matrix using svd
+movie_feature_matrix = movie_svd(movies_df, 75)
 
 # These are the DB credentials for your OWN MySQL
 # Don't worry about the deployment credentials, those are fixed
@@ -169,8 +172,18 @@ def result_json(matching_movies):
     movie_tokens = target_movie['tokens']
     movie_about = target_movie['about']
 
-    ranked_cosine_score = index_search(
-        movie_about.lower(),
+    # ranked_cosine_score = index_search(
+    #     movie_about.lower(),
+    #     inverted_lyric_index,
+    #     lyric_idf,
+    #     doc_norms
+    # )
+
+    ranked_cosine_score = svd_weighted_index_search(
+        target_movie['title'],
+        movie_about,
+        movies_df,
+        movie_feature_matrix,
         inverted_lyric_index,
         lyric_idf,
         doc_norms

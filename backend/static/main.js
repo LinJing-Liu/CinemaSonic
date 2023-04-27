@@ -44,6 +44,7 @@ function showOtherInput() {
 
 function submit(e) {
   e.preventDefault();
+  console.log('submittt')
 
   var title = document.getElementById("title-in").value;
   //var year = document.getElementById("year-in").value;
@@ -244,10 +245,9 @@ function toggleAllGenreCheck() {
   var checkboxes = document.getElementsByClassName("music-genre");
   var allChecked = document.getElementById("all");
   var checkValue = true
-
   for (var check of checkboxes) {
     if (!(check.checked)) {
-      //console.log("ffff")
+
       checkValue = false
     }
   }
@@ -315,6 +315,18 @@ function featureToText(features) {
 function reset() {
   document.getElementById("output").innerHTML = "";
 }
+function toggleExplainText() {
+  console.log('toggle')
+  var toggleButton = document.getElementById("explainToggleButton");
+  var explanation = document.getElementById("explanation");
+  if (toggleButton.innerHTML == "Show how we get your results") {
+    toggleButton.innerHTML = "Hide explanation";
+    explanation.style.display = 'block';
+  } else {
+    toggleButton.innerHTML = "Show how we get your results";
+    explanation.style.display = 'none';
+  }
+}
 
 function initialize() {
   document.getElementById("input-form").addEventListener('submit', submit);
@@ -327,4 +339,5 @@ function initialize() {
   document.getElementById("all").checked = true;
   document.getElementById("genreToggleButton").innerHTML = "Show";
   document.getElementById("genreToggleButton").addEventListener('click', toggleCollapseText);
+  document.getElementById("explainToggleButton").addEventListener('click', toggleExplainText);
 }
