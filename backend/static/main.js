@@ -119,7 +119,13 @@ function submit(e) {
     genre = "a"
   }
   //console.log(genre)
-  fetch("/get_output/" + title + "/" + director + "/" + genre)
+  fetch(
+    "/get_output/" + title +
+    "/" + director +
+    "/" + genre +
+    "/" + songPopularityFilter +
+    "/" + songLengthFilter
+  )
     .then((response) => response.json())
     .then((data) => {
       reset();
