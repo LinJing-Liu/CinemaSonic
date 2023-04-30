@@ -42,12 +42,20 @@ function showOtherInput() {
 }
 /* provided code ends */
 
+var songKeywords = [];
+var wordCloudShown = [];
+
+function resetWordCloudShown() {
+  for (var i = 0; i < 25; i++) {
+    wordCloudShown.push(false);
+  }
+}
+
 function submit(e) {
   e.preventDefault();
   console.log('submittt')
 
   var title = document.getElementById("title-in").value;
-  //var year = document.getElementById("year-in").value;
   var director = document.getElementById("director-in").value;
   var genre = document.getElementById("genre-in").value;
   var emptyTitleError = document.getElementById('empty-input-title-error');
@@ -56,8 +64,6 @@ function submit(e) {
   var songPopularityFilter = document.getElementById("popularity-range").value;
   var songLengthFilter = document.getElementById("length-range").value;
   var songGenreFilter = new Set();
-
-
 
   var allSongGenresIds = []
   var allSongGenres = []
@@ -102,7 +108,7 @@ function submit(e) {
     emptyGenreError.style.display = 'none';
     emptyTitleError.style.display = 'none';
   }
-  outDict = { "Title": title, /*"Year": year,*/ "Director": director, "Genre": genre, "songPopularity": songPopularityFilter, "songLength": songLengthFilter, "songGenres": songGenreFilter };
+  outDict = { "Title": title, "Director": director, "Genre": genre, "songPopularity": songPopularityFilter, "songLength": songLengthFilter, "songGenres": songGenreFilter };
   //send outDict somewhere... where?
   console.log(outDict);
 
@@ -112,13 +118,9 @@ function submit(e) {
   if (director == "") {
     director = "a"
   }
-  // if (actors == "") {
-  //   actors = "a"
-  // }
   if (genre == "") {
     genre = "a"
   }
-  //console.log(genre)
   fetch(
     "/get_output/" + title +
     "/" + director +
@@ -129,7 +131,9 @@ function submit(e) {
     .then((response) => response.json())
     .then((data) => {
       reset();
-      displayOutput(data, songPopularityFilter);
+      displayOutput(data.song, songPopularityFilter);
+      songKeywords = data.keywords;
+      resetWordCloudShown();
     })
 }
 
@@ -182,11 +186,53 @@ function displayOutput(songList, songPopularityFilter) {
   }
 }
 
+function generateWordCloud(id) {
+  if (wordCloudShown[id]) {
+    return;
+  }
+  wordCloudShown[id] = true;
+  var width = window.innerWidth / 4;
+  var height = window.innerHeight / 3;
+
+  var svg = d3.select("#song-cloud-" + id).append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .append("g");
+
+  var layout = d3.layout.cloud()
+    .size([width, height])
+    .words(songKeywords[id].map(function (d) { return { text: d }; }))
+    .padding(5)
+    .rotate(0)
+    .fontSize(20)
+    .on("end", draw);
+  layout.start();
+
+  function draw(words) {
+    svg
+      .append("g")
+      .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
+      .selectAll("text")
+      .data(words)
+      .enter().append("text")
+      .style("font-size", 20)
+      .style("fill", "#69b3a2")
+      .attr("text-anchor", "middle")
+      .style("font-family", "cursive")
+      .attr("transform", function (d) {
+        return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+      })
+      .text(function (d) { return d.text; });
+  }
+}
+
 function createSongCard(title, genre, duration, lyrics, features, popularity, id) {
   var minute = Math.floor(duration / 1000 / 60);
   var durationText = minute + " minutes and " + Math.floor((duration - minute * 1000 * 60) / 1000) + " seconds";
   var infoCollapseId = "song-info-collapse-" + id;
   var lyricCollapseId = "song-lyric-collapse-" + id;
+  var cloudCollapseId = "song-cloud-collapse-" + id;
+  var songCloudId = "song-cloud-" + id;
   const featureText = featureToText(features)
 
   return `
@@ -201,7 +247,7 @@ function createSongCard(title, genre, duration, lyrics, features, popularity, id
         </h5>
         <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#${infoCollapseId}"
           aria-expanded="false" aria-controls=${infoCollapseId}>
-          Song Characteristic Details
+          Song Characteristics
         </button>
         <div class="collapse song-collapse" id=${infoCollapseId}>
           <div class="card card-body">
@@ -233,6 +279,13 @@ function createSongCard(title, genre, duration, lyrics, features, popularity, id
         <div class="collapse song-collapse" id=${lyricCollapseId}>
           <div class="card card-body song-lyric">${lyrics}</div>
         </div>
+        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#${cloudCollapseId}"
+          aria-expanded="false" aria-controls=${cloudCollapseId} onclick='generateWordCloud(${id})'>
+          Song Cloud
+        </button>
+        <div class="collapse song-collapse" id=${cloudCollapseId}>
+          <div class="card card-body song-cloud" id=${songCloudId}></div>
+        </div>
       </div>
     </div>
   `
@@ -247,6 +300,7 @@ function toggleGenreChecks() {
     check.checked = checkValue;
   }
 }
+
 function toggleAllGenreCheck() {
   var checkboxes = document.getElementsByClassName("music-genre");
   var allChecked = document.getElementById("all");
@@ -317,10 +371,10 @@ function featureToText(features) {
 
 }
 
-
 function reset() {
   document.getElementById("output").innerHTML = "";
 }
+
 function toggleExplainText() {
   console.log('toggle')
   var toggleButton = document.getElementById("explainToggleButton");
