@@ -145,15 +145,20 @@ def sql_search(movie, director, genre, popularity, length):
         [nltk.edit_distance(genre, genres) for genres in dataset_genres])
 
     genre = dataset_genres[np.argmin(edit_dist_genres)]
+    mov_df_by_genre = movies_df[movies_df[genre]]
 
-    if genre_df[genre_df['genres'] == genre]['more than 75 movies'].bool():
+    # if genre_df[genre_df['genres'] == genre]['more than 75 movies'].bool():
 
-        movie_feature_matrix = movie_svd(movies_df[movies_df[genre]], 75)
-        movie_sim_rankings = movie_feature_cosine_sim(movie_feature_matrix)
 
-    else:
-        movie_feature_matrix = movie_svd(movies_df, 75)
-        movie_sim_rankings = movie_feature_cosine_sim(movie_feature_matrix)
+    movie_feature_matrix = movie_svd(mov_df_by_genre, 75)
+    movie_sim_rankings = movie_feature_cosine_sim(movie_feature_matrix)
+
+    # else:
+    #     k = np.min(mov_df_by_genre.shape)
+    #     movie_feature_matrix = movie_svd(mov_df_by_genre, k)
+    #     movie_sim_rankings = movie_feature_cosine_sim(movie_feature_matrix)
+        
+    
 
     # 2. If the movie has no matches:
     if matching_movies.shape[0] == 0:
@@ -164,7 +169,7 @@ def sql_search(movie, director, genre, popularity, length):
         # If edit distance <= 5 use the closest matching movie
         if np.min(edit_dist) <= 5:
             matched_title = dataset_titles[np.argmin(edit_dist)]
-            return result_json(df, inverted, idf, norms, movies_df[dataset_titles == matched_title], movie_sim_rankings)
+            return result_json(df, inverted, idf, norms, movies_df[dataset_titles == matched_title],mov_df_by_genre,movie_sim_rankings)
 
         else:
             # if genre != "select a genre":
@@ -178,7 +183,7 @@ def sql_search(movie, director, genre, popularity, length):
                 # genres_of_movies = movies_df['genre']
                 # bool_lst = [genre in lst for lst in genres_of_movies]
 
-                return result_json(df, inverted, idf, norms, movies_df[movies_df[genre]], movie_sim_rankings)
+                return result_json(df, inverted, idf, norms, mov_df_by_genre,mov_df_by_genre, movie_sim_rankings)
 
             else:
                 dataset_directors = movies_df['director']
@@ -192,12 +197,17 @@ def sql_search(movie, director, genre, popularity, length):
                 # genres_of_director_movies = matched_director['genre']
                 # bool_lst = [
                 #     genre in lst for lst in genres_of_director_movies]
-                bool_lst = [matched_director[genre]]
-
+                bool_lst = matched_director[genre].to_list()
+                
                 if sum(bool_lst) == 0:
-                    return result_json(df, inverted, idf, norms, matched_director, movie_sim_rankings)
+                    movie_feature_matrix = movie_svd(matched_director, 75)
+                    movie_sim_rankings = movie_feature_cosine_sim(movie_feature_matrix)
+                    return result_json(df, inverted, idf, norms, matched_director, matched_director, movie_sim_rankings)
 
-                return result_json(df, inverted, idf, norms, matched_director[bool_lst], movie_sim_rankings)
+
+                movie_feature_matrix = movie_svd(matched_director[bool_lst], 75)
+                movie_sim_rankings = movie_feature_cosine_sim(movie_feature_matrix)
+                return result_json(df, inverted, idf, norms, matched_director[bool_lst],matched_director[bool_lst] ,movie_sim_rankings)
 
             # else:
             #     if director == 'a':
@@ -214,10 +224,10 @@ def sql_search(movie, director, genre, popularity, length):
 
     # 3. If the movie has matches:
     else:
-        return result_json(df, inverted, idf, norms, matching_movies, movie_sim_rankings)
+        return result_json(df, inverted, idf, norms, matching_movies, mov_df_by_genre, movie_sim_rankings)
 
 
-def result_json(df, inverted, idf, norms, matching_movies, movie_sim_rankings):
+def result_json(df, inverted, idf, norms, matching_movies,mov_df, movie_sim_rankings):
     target_movie = matching_movies.iloc[0]
     movie_about = target_movie['about']
 
@@ -225,7 +235,7 @@ def result_json(df, inverted, idf, norms, matching_movies, movie_sim_rankings):
         target_movie['title'],
         movie_about,
         50,
-        movies_df,
+        mov_df,
         movie_sim_rankings,
         inverted,
         idf,

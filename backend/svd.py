@@ -22,6 +22,11 @@ def movie_svd(movies_df, k_value):
   vectorizer = TfidfVectorizer(stop_words = 'english', max_df = 0.9, min_df = 0.01)
   movie_td_matrix = vectorizer.fit_transform(movie_tokens)
 
+  min_dim = np.min(movie_td_matrix.get_shape())
+
+  if k_value > min_dim:
+    k_value = min_dim -2
+    
   docs_compressed, _, _ = svds(movie_td_matrix, k = k_value)
   docs_compressed_normed = normalize(docs_compressed)
 
@@ -83,6 +88,8 @@ def svd_weighted_index_search(movie_title, query, movie_count, movies_df, movie_
         weighted_word_count[word] = 0
       weighted_word_count[word] += 1
 
+  movie_count  = np.min((movie_sim_rankings.shape[1],movie_count))
+  
   # retrieve top similar movies and create a list of descriptions of similar movies
   sim_movies_idx = movie_sim_rankings[query_id, 0:movie_count]
   sim_query = []
