@@ -38,6 +38,8 @@ doc_norms = compute_doc_norms(inverted_lyric_index, lyric_idf, n_docs)
 
 # build movie feature matrix using svd
 movie_feature_matrix = movie_svd(movies_df, 75)
+movie_sim_rankings = movie_feature_cosine_sim(movie_feature_matrix)
+
 # create popular and niche song dataframes and indices
 niche_songs_df = filter_by_popularity(songs_df, 1)
 inverted_niche_index = build_inverted_index(niche_songs_df['tokens'])
@@ -199,45 +201,20 @@ def sql_search(movie, director, genre, popularity, length):
                     return result_json(df, inverted, idf, norms, movies_df[dataset_directors == director])
 
         return json.dumps([])
+    # 3. If the movie has matches:
     else:
-
         return result_json(df, inverted, idf, norms, matching_movies)
-        # # 3. If the movie has matches:
-        # target_movie = matching_movies.iloc[0]
-        # movie_tokens = target_movie['tokens']
-        # movie_about = target_movie['about']
-
-        # ranked_cosine_score = index_search(
-        #     movie_about.lower(),
-        #     inverted_lyric_index,
-        #     lyric_idf,
-        #     doc_norms
-        # )
-
-        # first_25 = ranked_cosine_score[:25]
-        # first_25_index = [ind for _, ind in first_25]
-        # first_25_songs = songs_df.iloc[first_25_index].to_dict('index')
-        # song_list = result_to_json(first_25_songs)
-        # return json.dumps(song_list)
 
 
 def result_json(df, inverted, idf, norms, matching_movies):
     target_movie = matching_movies.iloc[0]
-    movie_tokens = target_movie['tokens']
     movie_about = target_movie['about']
-
-    # ranked_cosine_score = index_search(
-    #     movie_about.lower(),
-    #     inverted_lyric_index,
-    #     lyric_idf,
-    #     doc_norms
-    # )
 
     ranked_cosine_score = svd_weighted_index_search(
         target_movie['title'],
         movie_about,
         movies_df,
-        movie_feature_matrix,
+        movie_sim_rankings,
         inverted,
         idf,
         norms

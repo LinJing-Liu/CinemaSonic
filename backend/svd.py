@@ -27,7 +27,7 @@ def movie_svd(movies_df, k_value):
 
   return docs_compressed_normed
 
-def movie_feature_cosine_sim(query_id, movie_feature_matrix):
+def movie_feature_cosine_sim(movie_feature_matrix):
   """
   Movie_feature_matrix is the normalized u matrix derived from applying SVD on the movie descriptions,
   which contains key features of the movie descriptions.
@@ -35,12 +35,15 @@ def movie_feature_cosine_sim(query_id, movie_feature_matrix):
   Use feature vectors of movie descriptions in movie_feature_matrix to compute cosine similarity
   between movies and return the movie indices sorted from most similar to least similar.
   """
+  movie_num = movie_feature_matrix.shape[0]
+  movie_sim_rankings = []
 
-  movie_sims = movie_feature_matrix.dot(movie_feature_matrix[query_id, :])
-  msort = np.argsort(-movie_sims)
+  for query_id in range(0, movie_num):
+    movie_sims = movie_feature_matrix.dot(movie_feature_matrix[query_id, :])
+    msort = np.argsort(-movie_sims)
+    movie_sim_rankings.append([i for i in msort[1: ]])
   
-  top_movie_idx = [i for i in msort[1:]]
-  return top_movie_idx
+  return np.array(movie_sim_rankings)
 
 def find_query_id(movie_title, movie_about, movies_df):
   """
@@ -56,7 +59,7 @@ def find_query_id(movie_title, movie_about, movies_df):
   else:
      return 1
     
-def svd_weighted_index_search(movie_title, query, movies_df, movie_feature_matrix, index, idf, doc_norms): 
+def svd_weighted_index_search(movie_title, query, movies_df, movie_sim_rankings, index, idf, doc_norms): 
   """
   Compute cosine similarity between query movie and songs using movie description
   and information stored in index, idf, and doc_norms.
@@ -81,10 +84,10 @@ def svd_weighted_index_search(movie_title, query, movies_df, movie_feature_matri
       weighted_word_count[word] += 1
 
   # retrieve top 10 similar movies and create a list of descriptions of similar movies
-  sim_movies_idx = movie_feature_cosine_sim(query_id, movie_feature_matrix)[:10]
+  sim_movies_idx = movie_sim_rankings[query_id, 0:10]
   sim_query = []
-  for i in sim_movies_idx:
-    sim_query.append(movies_df.iloc[i]['about'].lower())
+  for i in range(0, 10):
+    sim_query.append(movies_df.iloc[sim_movies_idx[i]]['about'].lower())
   
   # adjust tf vector for the query movie by considering words in the similar movies
   for description in sim_query:
