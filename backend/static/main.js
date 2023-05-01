@@ -65,6 +65,7 @@ function submit(e) {
   var title = document.getElementById("title-in").value;
   var director = document.getElementById("director-in").value;
   var genre = document.getElementById("genre-in").value;
+  //var artist = document.getElementById("artist-in").value;
   var emptyTitleError = document.getElementById('empty-input-title-error');
   var emptyGenreError = document.getElementById('empty-input-genre-error');
 
@@ -146,6 +147,8 @@ function submit(e) {
 
 function displayOutput(songList, songPopularityFilter) {
   var output = document.getElementById("output");
+  console.log('!!!!!!!!!!')
+  console.log(songList)
   if (songList.length == 0) {
     var noOutput = document.createElement("div");
     noOutput.innerHTML = "Sorry, we cannot find any relevant result.";
@@ -166,7 +169,7 @@ function displayOutput(songList, songPopularityFilter) {
   for (var song of songList) {
     var c = document.createElement("div");
     c.className = "col-sm-4";
-    c.innerHTML = createSongCard(song.title, song.genre, song.duration, song.lyrics, song.features, song.popularity, id);
+    c.innerHTML = createSongCard(song.title, song.genre, song.duration, song.lyrics, song.features, song.popularity, song.artist, song.link, id);
     cardElements.push(c);
     id++;
   }
@@ -192,6 +195,7 @@ function displayOutput(songList, songPopularityFilter) {
     output.appendChild(row);
   }
 }
+
 
 function generateWordCloud(id) {
   if (wordCloudShown[id]) {
@@ -233,7 +237,8 @@ function generateWordCloud(id) {
   }
 }
 
-function createSongCard(title, genre, duration, lyrics, features, popularity, id) {
+
+function createSongCard(title, genre, duration, lyrics, features, popularity, artist, link, id) {
   var minute = Math.floor(duration / 1000 / 60);
   var durationText = minute + " minutes and " + Math.floor((duration - minute * 1000 * 60) / 1000) + " seconds";
   var infoCollapseId = "song-info-collapse-" + id;
@@ -247,11 +252,16 @@ function createSongCard(title, genre, duration, lyrics, features, popularity, id
       <div class="card-body">
         <h5 class="card-title">${title}</h5>
         <h5 class="song-info">
-          <span class="genre">${genre} | </span>
+          <span class="artist">${artist} | </span>
+          <span class="genre">${genre}  </span>
+          <br />
           <span class="duration">${durationText}</span>
           <br />
           <span class="popularity">Popularity: ${popularity}</span>
         </h5>
+        <button class="btn btn-primary" type="button" onclick="openURL('${link}')">
+          Listen on Spotify
+        </button>
         <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#${infoCollapseId}"
           aria-expanded="false" aria-controls=${infoCollapseId}>
           Song Characteristics
@@ -331,6 +341,11 @@ function toggleCollapseText() {
   } else {
     toggleButton.innerHTML = "Show";
   }
+}
+
+function openURL(link) {
+  const url = link;
+  window.open(url, '_blank');
 }
 
 function featureToText(features) {
