@@ -11,9 +11,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
         rel="stylesheet">
+    <!-- bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <!-- d3.js -->
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3.layout.cloud.js"></script>
+    <!-- main.js -->
     <script src="{{ url_for('static', filename='main.js') }}"></script>
 </head>
 
@@ -47,12 +52,6 @@
                             placeholder="If other: specify (one) movie genre" id="other-movie-genre">
                         <p class="empty-input-error" id="empty-input-genre-error">Please input the required field.</p>
                     </div>
-                    <!--                    <div class="form-group">
-                        <label for="inputYear">Release Year</label>
-                        <div class="input-year">
-                            <input placeholder="(optional)" id="year-in">
-                        </div>
-                    </div>-->
                     <div class="form-group">
                         <label for="inputDirector">Director (full name)</label>
                         <div class="input-director">
