@@ -156,6 +156,7 @@ def sql_search(movie, director, genre, popularity, length):
                 [nltk.edit_distance(genre, genres) for genres in dataset_genres])
             genre = dataset_genres[np.argmin(edit_dist_genres)]
 
+            # if director field is empty
             if director == 'a':
                 genres_of_movies = movies_df['genre']
                 bool_lst = [genre in lst for lst in genres_of_movies]
@@ -173,7 +174,7 @@ def sql_search(movie, director, genre, popularity, length):
 
                 genres_of_director_movies = matched_director['genre']
                 bool_lst = [
-                    genre in lst if type(lst) != float else False for lst in genres_of_director_movies]
+                    genre in lst for lst in genres_of_director_movies]
 
                 if sum(bool_lst) == 0:
                     return result_json(df, inverted, idf, norms, matched_director)
@@ -239,4 +240,4 @@ def episodes_search():
     return sql_search(text)
 
 
-# app.run(debug=True)
+app.run(debug=True)
