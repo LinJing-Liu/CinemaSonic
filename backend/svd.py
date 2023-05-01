@@ -59,7 +59,7 @@ def find_query_id(movie_title, movie_about, movies_df):
   else:
      return 1
     
-def svd_weighted_index_search(movie_title, query, movies_df, movie_sim_rankings, index, idf, doc_norms): 
+def svd_weighted_index_search(movie_title, query, movie_count, movies_df, movie_sim_rankings, index, idf, doc_norms): 
   """
   Compute cosine similarity between query movie and songs using movie description
   and information stored in index, idf, and doc_norms.
@@ -83,10 +83,10 @@ def svd_weighted_index_search(movie_title, query, movies_df, movie_sim_rankings,
         weighted_word_count[word] = 0
       weighted_word_count[word] += 1
 
-  # retrieve top 10 similar movies and create a list of descriptions of similar movies
-  sim_movies_idx = movie_sim_rankings[query_id, 0:10]
+  # retrieve top similar movies and create a list of descriptions of similar movies
+  sim_movies_idx = movie_sim_rankings[query_id, 0:movie_count]
   sim_query = []
-  for i in range(0, 10):
+  for i in range(0, movie_count):
     sim_query.append(movies_df.iloc[sim_movies_idx[i]]['about'].lower())
   
   # adjust tf vector for the query movie by considering words in the similar movies
@@ -106,7 +106,7 @@ def svd_weighted_index_search(movie_title, query, movies_df, movie_sim_rankings,
   q_norm = math.sqrt(q_norm)
 
   # compute numerator for all documents
-  dot_prods = accumulate_dot_scores(weighted_word_count, index, idf)
+  dot_prods, doc_keywords = accumulate_dot_scores(weighted_word_count, index, idf)
   
   # for each document, compute the sim score
   cosine_sim = []
@@ -116,4 +116,13 @@ def svd_weighted_index_search(movie_title, query, movies_df, movie_sim_rankings,
     score = 0 if d_norm == 0 else numerator / (q_norm * d_norm)
     cosine_sim.append((score, i))
   
-  return sorted(cosine_sim, key=lambda x : x[0], reverse=True)
+  return sorted(cosine_sim, key=lambda x : x[0], reverse=True), doc_keywords
+
+def construct_top_keywords(song_keywords, top_song_index):
+
+  keywords = []
+  for i in top_song_index:
+    sorted_keywords = sorted(song_keywords[i], key=lambda x: x[1], reverse=True)
+    keywords.append([pair[0] for pair in sorted_keywords])
+  
+  return keywords

@@ -203,9 +203,10 @@ def result_json(df, inverted, idf, norms, matching_movies):
     target_movie = matching_movies.iloc[0]
     movie_about = target_movie['about']
 
-    ranked_cosine_score = svd_weighted_index_search(
+    ranked_cosine_score, song_keywords = svd_weighted_index_search(
         target_movie['title'],
         movie_about,
+        50,
         movies_df,
         movie_sim_rankings,
         inverted,
@@ -217,7 +218,11 @@ def result_json(df, inverted, idf, norms, matching_movies):
     first_25_index = [ind for _, ind in first_25]
     first_25_songs = df.iloc[first_25_index].to_dict('index')
     song_list = result_to_json(first_25_songs)
-    return json.dumps(song_list)
+    data = {
+        "song": song_list,
+        "keywords": construct_top_keywords(song_keywords, first_25_index)
+    }
+    return json.dumps(data)
 
 
 MOVIEGENRELIST = ["Action", "Adventure", "Biography", "Comedy", "Drama", "Family",
