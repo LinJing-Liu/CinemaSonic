@@ -164,7 +164,7 @@ def accumulate_dot_scores(query_word_counts, index, idf):
     
     # YOUR CODE HERE
     doc_scores = {}
-    
+    doc_keywords = {}
     for word in query_word_counts:
         q_i = query_word_counts[word] * idf[word]
         
@@ -172,9 +172,13 @@ def accumulate_dot_scores(query_word_counts, index, idf):
             d_ij = tf * idf[word]
             if not (doc_id in doc_scores):
                 doc_scores[doc_id] = 0
+            if not (doc_id in doc_keywords):
+                doc_keywords[doc_id] = []
+
             doc_scores[doc_id] += q_i * d_ij
+            doc_keywords[doc_id].append((word, q_i * d_ij))
     
-    return doc_scores
+    return (doc_scores, doc_keywords)
 
 def text_to_term_dict(text):
   text = text.split()
