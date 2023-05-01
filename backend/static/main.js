@@ -61,7 +61,8 @@ function resetWordCloudShown() {
 function submit(e) {
   e.preventDefault();
   console.log('submittt')
-
+  const loadingMessage = document.getElementById('loading');
+  loadingMessage.style.display = 'block';
   var title = document.getElementById("title-in").value;
   var director = document.getElementById("director-in").value;
   var genre = document.getElementById("genre-in").value;
@@ -143,9 +144,11 @@ function submit(e) {
       songKeywords = data.keywords;
       resetWordCloudShown();
     })
+
 }
 
 function displayOutput(songList, songPopularityFilter) {
+
   var output = document.getElementById("output");
   console.log('!!!!!!!!!!')
   console.log(songList)
@@ -194,6 +197,8 @@ function displayOutput(songList, songPopularityFilter) {
   for (var row of rowElements) {
     output.appendChild(row);
   }
+  const loadingMessage = document.getElementById('loading');
+  loadingMessage.style.display = 'none';
 }
 
 
@@ -235,6 +240,7 @@ function generateWordCloud(id) {
       })
       .text(function (d) { return d.text; });
   }
+
 }
 
 
