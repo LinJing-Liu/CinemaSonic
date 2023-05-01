@@ -259,6 +259,7 @@ def result_to_json(first_25_songs):
         song['title'] = query_result['track_name']
         song['genre'] = query_result['playlist_genre']
         song['duration'] = query_result['duration_ms']
+        song['artist'] = query_result['track_artist']
 
         # process lyrics to a long string with new lines after each lyric line
         lyrics = query_result['lyrics']

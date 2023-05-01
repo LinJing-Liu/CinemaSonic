@@ -1,12 +1,13 @@
 import json
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 from flask_cors import CORS
 from helpers.MySQLDatabaseHandler import MySQLDatabaseHandler
 
 from cosine_sim import *
 from svd import *
 from filters import *
+from spotify import *
 import pandas as pd
 import nltk
 from nltk.tokenize import TreebankWordTokenizer
@@ -89,6 +90,8 @@ CORS(app)
 
 @app.route('/get_output/<movie>/<director>/<genre>/<popularity>/<length>')
 def sql_search(movie, director, genre, popularity, length):
+    print(getTrack(session, '5SuOikwiRyPMVoIQDJUgSV'))
+
     movie_lower = movie.lower()
     director = director.lower()
     genre = genre.lower()
@@ -263,6 +266,27 @@ def home():
 def episodes_search():
     text = request.args.get("title")
     return sql_search(text)
+
+
+"""
+Spotify Authorization
+"""
+@app.route("/authorize")
+def authorize():
+    client_id = app.config['CLIENT_ID']
+    redirect_uri = app.config['REDIRECT_URI']
+    scope = app.config['SCOPE']
+    state_key = createStateKey(15)
+    session['state_key'] = state_key
+    
+    authorize_url = 'https://accounts.spotify.com/en/authorize?'
+    params = {'response_type': 'code', 'client_id': client_id,
+            'redirect_uri': redirect_uri, 'scope': scope, 
+            'state': state_key}
+    query_params = urlencode(params)
+    response = make_response(redirect(authorize_url + query_params))
+    return response
+
 
 
 app.run(debug=True)
