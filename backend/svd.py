@@ -25,7 +25,7 @@ def movie_svd(movies_df, k_value):
   min_dim = np.min(movie_td_matrix.get_shape())
 
   if k_value > min_dim:
-    k_value = min_dim -2
+    k_value = max(1,min_dim -2)
     
   docs_compressed, _, _ = svds(movie_td_matrix, k = k_value)
   docs_compressed_normed = normalize(docs_compressed)
