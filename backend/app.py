@@ -2,7 +2,7 @@ import json
 import os
 from flask import Flask, render_template, request
 from flask_cors import CORS
-from helpers.MySQLDatabaseHandler import MySQLDatabaseHandler
+# from helpers.MySQLDatabaseHandler import MySQLDatabaseHandler
 
 from cosine_sim import *
 from svd import *
@@ -21,8 +21,8 @@ print(os.environ['ROOT_PATH'])
 pd.set_option('max_colwidth', 600)
 songs_df = pd.read_csv("clean_spotify.csv")
 
-movies_df = pd.read_csv("clean_movie_dataset.csv")
-# movies_df = pd.read_pickle("clean_movie_dataset.pkl")
+# movies_df = pd.read_csv("clean_movie_dataset.csv")
+movies_df = pd.read_pickle("clean_movie_dataset.pkl")
 
 
 
