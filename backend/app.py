@@ -25,7 +25,6 @@ songs_df = pd.read_csv("clean_spotify.csv")
 movies_df = pd.read_pickle("clean_movie_dataset.pkl")
 
 
-
 # Movie Genre List
 dataset_genres = (pd.read_csv('genre_lst.csv')['genres']).to_list()
 
@@ -44,7 +43,6 @@ lyric_idf = compute_idf(inverted_lyric_index, n_docs)
 doc_norms = compute_doc_norms(inverted_lyric_index, lyric_idf, n_docs)
 
 
-
 # build movie feature matrix using svd
 movie_feature_matrix = movie_svd(movies_df, 75)
 movie_sim_rankings = movie_feature_cosine_sim(movie_feature_matrix)
@@ -54,26 +52,30 @@ niche_songs_df = filter_by_popularity(songs_df, 1)
 inverted_niche_index = build_inverted_index(niche_songs_df['tokens'])
 n_niche_docs = niche_songs_df.shape[0]
 niche_lyric_idf = compute_idf(inverted_niche_index, n_niche_docs)
-niche_doc_norms = compute_doc_norms(inverted_niche_index, niche_lyric_idf, n_niche_docs)
+niche_doc_norms = compute_doc_norms(
+    inverted_niche_index, niche_lyric_idf, n_niche_docs)
 
 popular_songs_df = filter_by_popularity(songs_df, 3)
 inverted_popular_index = build_inverted_index(popular_songs_df['tokens'])
 n_popular_docs = popular_songs_df.shape[0]
 popular_lyric_idf = compute_idf(inverted_popular_index, n_popular_docs)
-popular_doc_norms = compute_doc_norms(inverted_popular_index, popular_lyric_idf, n_popular_docs)
+popular_doc_norms = compute_doc_norms(
+    inverted_popular_index, popular_lyric_idf, n_popular_docs)
 
 # create short and long song dataframes and indices
 short_songs_df = filter_by_song_length(songs_df, 1)
 inverted_short_index = build_inverted_index(short_songs_df['tokens'])
 n_short_docs = short_songs_df.shape[0]
 short_lyric_idf = compute_idf(inverted_short_index, n_short_docs)
-short_doc_norms = compute_doc_norms(inverted_short_index, short_lyric_idf, n_short_docs)
+short_doc_norms = compute_doc_norms(
+    inverted_short_index, short_lyric_idf, n_short_docs)
 
 long_songs_df = filter_by_song_length(songs_df, 3)
 inverted_long_index = build_inverted_index(long_songs_df['tokens'])
 n_long_docs = long_songs_df.shape[0]
 long_lyric_idf = compute_idf(inverted_long_index, n_long_docs)
-long_doc_norms = compute_doc_norms(inverted_long_index, long_lyric_idf, n_long_docs)
+long_doc_norms = compute_doc_norms(
+    inverted_long_index, long_lyric_idf, n_long_docs)
 
 # These are the DB credentials for your OWN MySQL
 # Don't worry about the deployment credentials, those are fixed
@@ -120,7 +122,7 @@ def sql_search(movie, director, genre, popularity, length):
         idf = popular_lyric_idf
         inverted = inverted_popular_index
         norms = popular_doc_norms
-    
+
     if length == "1":
         df = short_songs_df
         idf = short_lyric_idf
@@ -131,12 +133,10 @@ def sql_search(movie, director, genre, popularity, length):
         idf = long_lyric_idf
         inverted = inverted_long_index
         norms = long_doc_norms
-    
 
     # 1. find matching movies in the database
     dataset_titles = movies_df['title']
     matching_movies = movies_df[dataset_titles == movie_lower]
-
 
     # 2. If the movie has no matches:
     if matching_movies.shape[0] == 0:
@@ -239,4 +239,4 @@ def episodes_search():
     return sql_search(text)
 
 
-# app.run(debug=True)
+#app.run(debug=True)
