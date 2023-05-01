@@ -44,10 +44,17 @@ function showOtherInput() {
 
 var songKeywords = [];
 var wordCloudShown = [];
+initializeWordCloudShown();
+
+function initializeWordCloudShown() {
+  for (var i = 0; i < 25; i++) {
+    wordCloudShown.push(false);
+  }
+}
 
 function resetWordCloudShown() {
   for (var i = 0; i < 25; i++) {
-    wordCloudShown.push(false);
+    wordCloudShown[i] = false;
   }
 }
 
@@ -191,7 +198,7 @@ function generateWordCloud(id) {
     return;
   }
   wordCloudShown[id] = true;
-  var width = window.innerWidth / 4;
+  var width = window.innerWidth / 5;
   var height = window.innerHeight / 3;
 
   var svg = d3.select("#song-cloud-" + id).append("svg")
