@@ -197,7 +197,7 @@ def sql_search(movie, director, genre, popularity, length):
                 bool_lst = [matched_director[genre]]
 
                 if sum(bool_lst) == 0:
-                    return result_json(df, inverted, idf, norms, matched_director)
+                    return result_json(df, inverted, idf, norms, matched_director,movie_sim_rankings)
 
                 return result_json(df, inverted, idf, norms, matched_director[bool_lst],movie_sim_rankings)
 
