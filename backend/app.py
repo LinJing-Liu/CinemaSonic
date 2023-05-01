@@ -135,9 +135,6 @@ def sql_search(movie, director, genre, popularity, length):
     dataset_titles = movies_df['title']
     matching_movies = movies_df[dataset_titles == movie_lower]
 
-    # # Return no result found if the movie title input is empty
-    # if (movie_lower == 'a'):
-    #     return json.dumps([])
 
     # 2. If the movie has no matches:
     if matching_movies.shape[0] == 0:
