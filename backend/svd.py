@@ -58,11 +58,12 @@ def find_query_id(movie_title, movie_about, movies_df):
   Return 1 if no such movie is found.
   """
   
-  row = movies_df.loc[(movies_df['title'] == movie_title) & (movies_df['about'] == movie_about)]
-  if len(row.index) > 0:
-    return row.index[0]
+  indices = movies_df.index[(movies_df['title'] == movie_title) & (movies_df['about'] == movie_about)].tolist()
+
+  if len(indices) < 1:
+    return 1
   else:
-     return 1
+    return movies_df.index.tolist().index(indices[0])
     
 def svd_weighted_index_search(movie_title, query, movie_count, movies_df, movie_sim_rankings, index, idf, doc_norms): 
   """
