@@ -40,30 +40,18 @@ doc_norms = compute_doc_norms(inverted_lyric_index, lyric_idf, n_docs)
 # build movie feature matrix using svd
 movie_feature_matrix = movie_svd(movies_df, 75)
 # create popular and niche song dataframes and indices
-niche_songs_df = filter_by_popularity(songs_df, 1)
-inverted_niche_index = build_inverted_index(niche_songs_df['tokens'])
-n_niche_docs = niche_songs_df.shape[0]
-niche_lyric_idf = compute_idf(inverted_niche_index, n_niche_docs)
-niche_doc_norms = compute_doc_norms(inverted_niche_index, niche_lyric_idf, n_niche_docs)
+niche_songs_df = filter_df(songs_df, filter_by_popularity, 1)
+inverted_niche_index, n_niche_docs, niche_lyric_idf, niche_doc_norms = compute_cosine_tuple(niche_songs_df)
 
-popular_songs_df = filter_by_popularity(songs_df, 3)
-inverted_popular_index = build_inverted_index(popular_songs_df['tokens'])
-n_popular_docs = popular_songs_df.shape[0]
-popular_lyric_idf = compute_idf(inverted_popular_index, n_popular_docs)
-popular_doc_norms = compute_doc_norms(inverted_popular_index, popular_lyric_idf, n_popular_docs)
+popular_songs_df = filter_df(songs_df, filter_by_popularity, 3)
+inverted_popular_index, n_popular_docs, popular_lyric_idf, popular_doc_norms = compute_cosine_tuple(popular_songs_df)
 
 # create short and long song dataframes and indices
-short_songs_df = filter_by_song_length(songs_df, 1)
-inverted_short_index = build_inverted_index(short_songs_df['tokens'])
-n_short_docs = short_songs_df.shape[0]
-short_lyric_idf = compute_idf(inverted_short_index, n_short_docs)
-short_doc_norms = compute_doc_norms(inverted_short_index, short_lyric_idf, n_short_docs)
+short_songs_df = filter_df(songs_df, filter_by_song_length, 1)
+inverted_short_index, n_short_docs, short_lyric_idf, short_doc_norms = compute_cosine_tuple(short_songs_df)
 
-long_songs_df = filter_by_song_length(songs_df, 3)
-inverted_long_index = build_inverted_index(long_songs_df['tokens'])
-n_long_docs = long_songs_df.shape[0]
-long_lyric_idf = compute_idf(inverted_long_index, n_long_docs)
-long_doc_norms = compute_doc_norms(inverted_long_index, long_lyric_idf, n_long_docs)
+long_songs_df = filter_df(songs_df, filter_by_song_length, 3)
+inverted_long_index, n_long_docs, long_lyric_idf, long_doc_norms p= compute_cosine_tuple(long_songs_df)
 
 # These are the DB credentials for your OWN MySQL
 # Don't worry about the deployment credentials, those are fixed
@@ -90,7 +78,6 @@ CORS(app)
 
 @app.route('/get_output/<movie>/<director>/<genre>/<popularity>/<length>')
 def sql_search(movie, director, genre, popularity, length):
-    print(getTrack(session, '5SuOikwiRyPMVoIQDJUgSV'))
 
     movie_lower = movie.lower()
     director = director.lower()

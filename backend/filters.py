@@ -32,8 +32,15 @@ def filter_by_song_length(df, option, threshold=180000):
 
 
 def filter_by_genre(df, genres=[]):
+	genres = [g.lower() for g in genres]
 	return df[df.playlist_genre.isin(genres)]
 
+
+def filter_df(df, filter_func, param, threshold=None):
+	if threshold == None:
+		return filter_func(df, param)
+	else:
+		return filter_func(df, param, threshold=threshold)
 
 # # precompute inverted index and idf
 # pd.set_option('max_colwidth', 600)
@@ -45,4 +52,4 @@ def filter_by_genre(df, genres=[]):
 # movies_df['tokens'] = movies_df["clean about"].apply(eval)
 
 # filtered_songs = filter_by_popularity(songs_df, 1)
-# print(filtered_songs.index)
+# print(filtered_songs['playlist_genre'])
