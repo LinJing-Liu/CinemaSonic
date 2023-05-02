@@ -31,9 +31,35 @@ def filter_by_song_length(df, option, threshold=180000):
 		raise ValueError("The song length filter selection is invalid")
 
 
-def filter_by_genre(df, genres=[]):
-	return df[df.playlist_genre.isin(genres)]
+def filter_by_genre(df, cosine_scores, genres=[]):
+    genres = genres.lower().split(',')
+    if "rnb" in genres:
+        genres.append('r&b')
 
+    total_songs = 0
+    ind = 0
+    shape = df.shape[0]
+
+    first_25_index = []
+    while total_songs < 25 and ind < shape:
+        _, song_index = cosine_scores[ind]
+        song_info = df.iloc[song_index]
+
+        if song_info.playlist_genre.lower() in genres:
+            first_25_index.append(song_index)
+            total_songs += 1
+        ind += 1
+    
+    first_25_songs = df.iloc[first_25_index].to_dict('index')
+    print(first_25_index)
+
+    return (first_25_index, first_25_songs)
+
+def filter_df(df, filter_func, param, threshold=None):
+	if threshold == None:
+		return filter_func(df, param)
+	else:
+		return filter_func(df, param, threshold=threshold)
 
 # # precompute inverted index and idf
 # pd.set_option('max_colwidth', 600)
@@ -45,4 +71,4 @@ def filter_by_genre(df, genres=[]):
 # movies_df['tokens'] = movies_df["clean about"].apply(eval)
 
 # filtered_songs = filter_by_popularity(songs_df, 1)
-# print(filtered_songs.index)
+# print(filtered_songs['playlist_genre'])

@@ -288,6 +288,15 @@ def result_to_json(first_25_songs):
         song_list.append(song)
     return song_list
 
+def compute_cosine_tuple(df):
+    inverted_index = build_inverted_index(df['tokens'])
+    n_docs = df.shape[0]
+    lyric_idf = compute_idf(inverted_index, n_docs)
+    doc_norms = compute_doc_norms(inverted_index, lyric_idf, n_docs)
+
+    return (inverted_index, n_docs, lyric_idf, doc_norms)
+    
+
 # # precompute inverted index and idf
 # pd.set_option('max_colwidth', 600)
 # songs_df = pd.read_csv("clean_spotify.csv")

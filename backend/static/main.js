@@ -73,7 +73,7 @@ function submit(e) {
 
   var songPopularityFilter = document.getElementById("popularity-range").value;
   var songLengthFilter = document.getElementById("length-range").value;
-  var songGenreFilter = new Set();
+  var songGenreFilter = [];
 
   var allSongGenresIds = []
   var allSongGenres = []
@@ -88,7 +88,7 @@ function submit(e) {
   else {
     for (let i = 0; i < allSongGenres.length; i++) {
       if (document.getElementById(allSongGenresIds[i]).checked) {
-        songGenreFilter.add(allSongGenres[i])
+        songGenreFilter.push(allSongGenres[i])
       }
     }
   }
@@ -136,7 +136,8 @@ function submit(e) {
     "/" + director +
     "/" + genre +
     "/" + songPopularityFilter +
-    "/" + songLengthFilter
+    "/" + songLengthFilter +
+    "/" + songGenreFilter.toString()
   )
     .then((response) => response.json())
     .then((data) => {
