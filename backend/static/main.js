@@ -63,6 +63,7 @@ function submit(e) {
   console.log('submittt')
   const loadingMessage = document.getElementById('loading');
   loadingMessage.style.display = 'block';
+  document.getElementById("output").innerHTML = "";
   var title = document.getElementById("title-in").value;
   var director = document.getElementById("director-in").value;
   var genre = document.getElementById("genre-in").value;
@@ -265,9 +266,6 @@ function createSongCard(title, genre, duration, lyrics, features, popularity, ar
           <br />
           <span class="popularity">Popularity: ${popularity}</span>
         </h5>
-        <button class="btn btn-primary" type="button" onclick="openURL('${link}')">
-          Listen on Spotify
-        </button>
         <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#${infoCollapseId}"
           aria-expanded="false" aria-controls=${infoCollapseId}>
           Song Characteristics
@@ -400,6 +398,8 @@ function featureToText(features) {
 }
 
 function reset() {
+  const loadingMessage = document.getElementById('loading');
+  loadingMessage.style.display = 'none';
   document.getElementById("output").innerHTML = "";
 }
 
