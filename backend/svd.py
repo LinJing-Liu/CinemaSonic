@@ -22,12 +22,17 @@ def movie_svd(movies_df, k_value):
   vectorizer = TfidfVectorizer(stop_words = 'english', max_df = 0.9, min_df = 0.01)
   movie_td_matrix = vectorizer.fit_transform(movie_tokens)
 
+  min_dim = np.min(movie_td_matrix.get_shape())
+
+  if k_value > min_dim:
+    k_value = max(1,min_dim -2)
+    
   docs_compressed, _, _ = svds(movie_td_matrix, k = k_value)
   docs_compressed_normed = normalize(docs_compressed)
 
   return docs_compressed_normed
 
-def movie_feature_cosine_sim(query_id, movie_feature_matrix):
+def movie_feature_cosine_sim(movie_feature_matrix):
   """
   Movie_feature_matrix is the normalized u matrix derived from applying SVD on the movie descriptions,
   which contains key features of the movie descriptions.
@@ -35,12 +40,15 @@ def movie_feature_cosine_sim(query_id, movie_feature_matrix):
   Use feature vectors of movie descriptions in movie_feature_matrix to compute cosine similarity
   between movies and return the movie indices sorted from most similar to least similar.
   """
+  movie_num = movie_feature_matrix.shape[0]
+  movie_sim_rankings = []
 
-  movie_sims = movie_feature_matrix.dot(movie_feature_matrix[query_id, :])
-  msort = np.argsort(-movie_sims)
+  for query_id in range(0, movie_num):
+    movie_sims = movie_feature_matrix.dot(movie_feature_matrix[query_id, :])
+    msort = np.argsort(-movie_sims)
+    movie_sim_rankings.append([i for i in msort[1: ]])
   
-  top_movie_idx = [i for i in msort[1:]]
-  return top_movie_idx
+  return np.array(movie_sim_rankings)
 
 def find_query_id(movie_title, movie_about, movies_df):
   """
@@ -56,7 +64,7 @@ def find_query_id(movie_title, movie_about, movies_df):
   else:
      return 1
     
-def svd_weighted_index_search(movie_title, query, movies_df, movie_feature_matrix, index, idf, doc_norms): 
+def svd_weighted_index_search(movie_title, query, movie_count, movies_df, movie_sim_rankings, index, idf, doc_norms): 
   """
   Compute cosine similarity between query movie and songs using movie description
   and information stored in index, idf, and doc_norms.
@@ -80,11 +88,13 @@ def svd_weighted_index_search(movie_title, query, movies_df, movie_feature_matri
         weighted_word_count[word] = 0
       weighted_word_count[word] += 1
 
-  # retrieve top 10 similar movies and create a list of descriptions of similar movies
-  sim_movies_idx = movie_feature_cosine_sim(query_id, movie_feature_matrix)[:10]
+  movie_count  = np.min((movie_sim_rankings.shape[1],movie_count))
+  
+  # retrieve top similar movies and create a list of descriptions of similar movies
+  sim_movies_idx = movie_sim_rankings[query_id, 0:movie_count]
   sim_query = []
-  for i in sim_movies_idx:
-    sim_query.append(movies_df.iloc[i]['about'].lower())
+  for i in range(0, movie_count):
+    sim_query.append(movies_df.iloc[sim_movies_idx[i]]['about'].lower())
   
   # adjust tf vector for the query movie by considering words in the similar movies
   for description in sim_query:
@@ -103,7 +113,7 @@ def svd_weighted_index_search(movie_title, query, movies_df, movie_feature_matri
   q_norm = math.sqrt(q_norm)
 
   # compute numerator for all documents
-  dot_prods = accumulate_dot_scores(weighted_word_count, index, idf)
+  dot_prods, doc_keywords = accumulate_dot_scores(weighted_word_count, index, idf)
   
   # for each document, compute the sim score
   cosine_sim = []
@@ -113,4 +123,13 @@ def svd_weighted_index_search(movie_title, query, movies_df, movie_feature_matri
     score = 0 if d_norm == 0 else numerator / (q_norm * d_norm)
     cosine_sim.append((score, i))
   
-  return sorted(cosine_sim, key=lambda x : x[0], reverse=True)
+  return sorted(cosine_sim, key=lambda x : x[0], reverse=True), doc_keywords
+
+def construct_top_keywords(song_keywords, top_song_index):
+
+  keywords = []
+  for i in top_song_index:
+    sorted_keywords = sorted(song_keywords[i], key=lambda x: x[1], reverse=True)
+    keywords.append([pair[0] for pair in sorted_keywords])
+  
+  return keywords
