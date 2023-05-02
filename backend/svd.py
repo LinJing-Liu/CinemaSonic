@@ -61,7 +61,7 @@ def find_query_id(movie_title, movie_about, movies_df):
   indices = movies_df.index[(movies_df['title'] == movie_title) & (movies_df['about'] == movie_about)].tolist()
 
   if len(indices) < 1:
-    return 1
+    return -1
   else:
     return movies_df.index.tolist().index(indices[0])
     
@@ -92,10 +92,11 @@ def svd_weighted_index_search(movie_title, query, movie_count, movies_df, movie_
   movie_count  = np.min((movie_sim_rankings.shape[1],movie_count))
   
   # retrieve top similar movies and create a list of descriptions of similar movies
-  sim_movies_idx = movie_sim_rankings[query_id, 0:movie_count]
   sim_query = []
-  for i in range(0, movie_count):
-    sim_query.append(movies_df.iloc[sim_movies_idx[i]]['about'].lower())
+  if query_id != -1:
+    sim_movies_idx = movie_sim_rankings[query_id, 0:movie_count]
+    for i in range(0, movie_count):
+      sim_query.append(movies_df.iloc[sim_movies_idx[i]]['about'].lower())
   
   # adjust tf vector for the query movie by considering words in the similar movies
   for description in sim_query:
