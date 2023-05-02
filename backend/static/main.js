@@ -252,6 +252,19 @@ function createSongCard(title, genre, duration, lyrics, features, popularity, ar
   var lyricCollapseId = "song-lyric-collapse-" + id;
   var cloudCollapseId = "song-cloud-collapse-" + id;
   var songCloudId = "song-cloud-" + id;
+
+  var title_split = title.split(" ")
+  var artist_split = artist.split(" ")
+  var link = 'https://open.spotify.com/search/'
+  for (let i = 0; i < title_split.length; i++) {
+    link += title_split[i] + '%20'
+  }
+  for (let i = 0; i < artist_split.length - 1; i++) {
+    link += artist_split[i] + '%20'
+  }
+  link += artist_split[artist_split.length - 1]
+  console.log(link)
+
   const featureText = featureToText(features)
 
   return `
@@ -266,6 +279,9 @@ function createSongCard(title, genre, duration, lyrics, features, popularity, ar
           <br />
           <span class="popularity">Popularity: ${popularity}</span>
         </h5>
+        <button class="btn btn-primary" type="button" onclick="openURL('${link}')">
+        Listen on Spotify
+      </button>
         <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#${infoCollapseId}"
           aria-expanded="false" aria-controls=${infoCollapseId}>
           Song Characteristics
