@@ -31,10 +31,29 @@ def filter_by_song_length(df, option, threshold=180000):
 		raise ValueError("The song length filter selection is invalid")
 
 
-def filter_by_genre(df, genres=[]):
-	genres = [g.lower() for g in genres]
-	return df[df.playlist_genre.isin(genres)]
+def filter_by_genre(df, cosine_scores, genres=[]):
+    genres = genres.lower().split(',')
+    if "rnb" in genres:
+        genres.append('r&b')
 
+    total_songs = 0
+    ind = 0
+    shape = df.shape[0]
+
+    first_25_index = []
+    while total_songs < 25 and ind < shape:
+        _, song_index = cosine_scores[ind]
+        song_info = df.iloc[song_index]
+
+        if song_info.playlist_genre.lower() in genres:
+            first_25_index.append(song_index)
+            total_songs += 1
+        ind += 1
+    
+    first_25_songs = df.iloc[first_25_index].to_dict('index')
+    print(first_25_index)
+
+    return (first_25_index, first_25_songs)
 
 def filter_df(df, filter_func, param, threshold=None):
 	if threshold == None:

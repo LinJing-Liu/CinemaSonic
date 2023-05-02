@@ -88,8 +88,8 @@ CORS(app)
 # there's a much better and cleaner way to do this
 
 
-@app.route('/get_output/<movie>/<director>/<genre>/<popularity>/<length>')
-def sql_search(movie, director, genre, popularity, length):
+@app.route('/get_output/<movie>/<director>/<genre>/<popularity>/<length>/<song_genres>')
+def sql_search(movie, director, genre, popularity, length, song_genres):
 
     movie_lower = movie.lower()
     director = director.lower()
@@ -155,7 +155,7 @@ def sql_search(movie, director, genre, popularity, length):
         # If edit distance <= 5 use the closest matching movie
         if np.min(edit_dist) <= 5:
             matched_title = dataset_titles[np.argmin(edit_dist)]
-            return result_json(df, inverted, idf, norms, movies_df[dataset_titles == matched_title],mov_df_by_genre,movie_sim_rankings)
+            return result_json(df, inverted, idf, norms, movies_df[dataset_titles == matched_title],mov_df_by_genre,movie_sim_ranking, song_genres)
 
         else:
             # if genre != "select a genre":
@@ -169,7 +169,7 @@ def sql_search(movie, director, genre, popularity, length):
                 # genres_of_movies = movies_df['genre']
                 # bool_lst = [genre in lst for lst in genres_of_movies]
 
-                return result_json(df, inverted, idf, norms, mov_df_by_genre,mov_df_by_genre, movie_sim_rankings)
+                return result_json(df, inverted, idf, norms, mov_df_by_genre,mov_df_by_genre, movie_sim_rankings, song_genres)
 
             else:
                 dataset_directors = movies_df['director']
@@ -188,12 +188,12 @@ def sql_search(movie, director, genre, popularity, length):
                 if sum(bool_lst) == 0:
                     movie_feature_matrix = movie_svd(matched_director, 75)
                     movie_sim_rankings = movie_feature_cosine_sim(movie_feature_matrix)
-                    return result_json(df, inverted, idf, norms, matched_director, matched_director, movie_sim_rankings)
+                    return result_json(df, inverted, idf, norms, matched_director, matched_director, movie_sim_rankings, song_genres)
 
 
                 movie_feature_matrix = movie_svd(matched_director[bool_lst], 75)
                 movie_sim_rankings = movie_feature_cosine_sim(movie_feature_matrix)
-                return result_json(df, inverted, idf, norms, matched_director[bool_lst],matched_director[bool_lst] ,movie_sim_rankings)
+                return result_json(df, inverted, idf, norms, matched_director[bool_lst],matched_director[bool_lst] ,movie_sim_rankings, song_genres)
 
             # else:
             #     if director == 'a':
@@ -210,10 +210,10 @@ def sql_search(movie, director, genre, popularity, length):
 
     # 3. If the movie has matches:
     else:
-        return result_json(df, inverted, idf, norms, matching_movies, mov_df_by_genre, movie_sim_rankings)
+        return result_json(df, inverted, idf, norms, matching_movies, mov_df_by_genre, movie_sim_rankings, song_genres)
 
 
-def result_json(df, inverted, idf, norms, matching_movies,mov_df, movie_sim_rankings):
+def result_json(df, inverted, idf, norms, matching_movies,mov_df, movie_sim_rankings, genres=[]):
     target_movie = matching_movies.iloc[0]
     movie_about = target_movie['about']
 
@@ -228,9 +228,10 @@ def result_json(df, inverted, idf, norms, matching_movies,mov_df, movie_sim_rank
         norms
     )
 
-    first_25 = ranked_cosine_score[:25]
-    first_25_index = [ind for _, ind in first_25]
-    first_25_songs = df.iloc[first_25_index].to_dict('index')
+    # first_25 = ranked_cosine_score[:25]
+    # first_25_index = [ind for _, ind in first_25]
+    # first_25_songs = df.iloc[first_25_index].to_dict('index')
+    first_25_index, first_25_songs = filter_by_genre(df, ranked_cosine_score, genres)
     song_list = result_to_json(first_25_songs)
     data = {
         "song": song_list,
