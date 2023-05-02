@@ -7,7 +7,6 @@ from flask_cors import CORS
 from cosine_sim import *
 from svd import *
 from filters import *
-from spotify import *
 import pandas as pd
 import nltk
 # from nltk.tokenize import TreebankWordTokenizer
@@ -254,4 +253,4 @@ def episodes_search():
     return sql_search(text)
 
 
-#app.run(debug=True)
+# app.run(debug=True)
