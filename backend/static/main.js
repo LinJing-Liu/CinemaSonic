@@ -221,12 +221,19 @@ function getSongKeywordsMap(id) {
     if (Math.floor(i / 5) >= wordCloudColors.length) {
       colorIndex = wordCloudColors.length - 1;
     }
+
+    var size = 30 - adjustment * i;
+    if (size < 12) {
+      size = 12;
+    }
+
     map.push(
       {
         word: songKeywords[id][i],
-        size: 30 - adjustment * i,
+        size: size,
         color: wordCloudColors[colorIndex]
-      });
+      }
+    );
   }
 
   return map;
