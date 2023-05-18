@@ -89,7 +89,7 @@ def svd_weighted_index_search(movie_title, query, movie_count, movies_df, movie_
         weighted_word_count[word] = 0
       weighted_word_count[word] += 1
 
-  movie_count  = np.min((movie_sim_rankings.shape[1],movie_count))
+  movie_count = np.min((movie_sim_rankings.shape[1],movie_count))
   
   # retrieve top similar movies and create a list of descriptions of similar movies
   sim_query = []
@@ -132,6 +132,8 @@ def construct_top_keywords(song_keywords, top_song_index):
   keywords = []
   for i in top_song_index:
     sorted_keywords = sorted(song_keywords[i], key=lambda x: x[1], reverse=True)
+    if len(sorted_keywords) > 25:
+      sorted_keywords = sorted_keywords[:25]
     keywords.append([pair[0] for pair in sorted_keywords])
   
   return keywords

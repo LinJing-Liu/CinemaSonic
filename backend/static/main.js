@@ -44,6 +44,7 @@ function showOtherInput() {
 
 var songKeywords = [];
 var wordCloudShown = [];
+const wordCloudColors = ["#ff6600", "#f3f315", "#83f52c", "#04d9ff"];
 initializeWordCloudShown();
 
 function initializeWordCloudShown() {
@@ -203,6 +204,33 @@ function displayOutput(songList, songPopularityFilter) {
   loadingMessage.style.display = 'none';
 }
 
+function getSongKeywordsMap(id) {
+  if (id < 0 || id >= songKeywords.length) {
+    return [];
+  }
+
+  var wordCount = songKeywords[id].length;
+  var adjustment = 1;
+  if (wordCount < 10) {
+    adjustment = 2.5;
+  }
+
+  var map = []
+  for (var i = 0; i < songKeywords[id].length; i++) {
+    var colorIndex = Math.floor(i / 5);
+    if (Math.floor(i / 5) >= wordCloudColors.length) {
+      colorIndex = wordCloudColors.length - 1;
+    }
+    map.push(
+      {
+        word: songKeywords[id][i],
+        size: 30 - adjustment * i,
+        color: wordCloudColors[colorIndex]
+      });
+  }
+
+  return map;
+}
 
 function generateWordCloud(id) {
   if (wordCloudShown[id]) {
@@ -210,6 +238,9 @@ function generateWordCloud(id) {
   }
   wordCloudShown[id] = true;
   var width = window.innerWidth / 5;
+  if (window.innerWidth < 1000) {
+    width = window.innerWidth / 2;
+  }
   var height = window.innerHeight / 3;
 
   var svg = d3.select("#song-cloud-" + id).append("svg")
@@ -219,10 +250,10 @@ function generateWordCloud(id) {
 
   var layout = d3.layout.cloud()
     .size([width, height])
-    .words(songKeywords[id].map(function (d) { return { text: d }; }))
+    .words(getSongKeywordsMap(id).map(function (d) { console.log(d); return { text: d.word, size: d.size, color: d.color }; }))
     .padding(5)
     .rotate(0)
-    .fontSize(20)
+    .fontSize(function (d) { return d.size; })
     .on("end", draw);
   layout.start();
 
@@ -233,8 +264,8 @@ function generateWordCloud(id) {
       .selectAll("text")
       .data(words)
       .enter().append("text")
-      .style("font-size", 20)
-      .style("fill", "#69b3a2")
+      .style("font-size", function (d) { return d.size; })
+      .style("fill", function (d) { return d.color; })
       .attr("text-anchor", "middle")
       .style("font-family", "cursive")
       .attr("transform", function (d) {

@@ -86,6 +86,19 @@ CORS(app)
 # but if you decide to use SQLAlchemy ORM framework,
 # there's a much better and cleaner way to do this
 
+def insert_movie(matching_movies, total_movies_df, current_movies_df):
+    title = matching_movies.iloc[0]['title']
+    about = matching_movies.iloc[0]['about']
+
+    if find_query_id(title, about, current_movies_df) == -1:
+        current_movies_df.loc[-1] = total_movies_df[total_movies_df['title'] == title].values.flatten().tolist()
+        current_movies_df.index = current_movies_df.index + 1
+        current_movies_df = current_movies_df.sort_index()
+
+    movie_feature_matrix = movie_svd(current_movies_df, 75)
+    movie_sim_rankings = movie_feature_cosine_sim(movie_feature_matrix)
+    
+    return current_movies_df, movie_sim_rankings
 
 @app.route('/get_output/<movie>/<director>/<genre>/<popularity>/<length>/<song_genres>')
 def sql_search(movie, director, genre, popularity, length, song_genres):
@@ -132,11 +145,6 @@ def sql_search(movie, director, genre, popularity, length, song_genres):
     genre = dataset_genres[np.argmin(edit_dist_genres)]
     mov_df_by_genre = movies_df[movies_df[genre]]
 
-    # if genre_df[genre_df['genres'] == genre]['more than 75 movies'].bool():
-
-    movie_feature_matrix = movie_svd(mov_df_by_genre, 75)
-    movie_sim_rankings = movie_feature_cosine_sim(movie_feature_matrix)
-
     # else:
     #     k = np.min(mov_df_by_genre.shape)
     #     movie_feature_matrix = movie_svd(mov_df_by_genre, k)
@@ -151,7 +159,8 @@ def sql_search(movie, director, genre, popularity, length, song_genres):
         # If edit distance <= 5 use the closest matching movie
         if np.min(edit_dist) <= 5:
             matched_title = dataset_titles[np.argmin(edit_dist)]
-            return result_json(df, inverted, idf, norms, movies_df[dataset_titles == matched_title], mov_df_by_genre, movie_sim_ranking, song_genres)
+            mov_df_by_genre, movie_sim_rankings = insert_movie(movies_df[dataset_titles == matched_title], movies_df, mov_df_by_genre)
+            return result_json(df, inverted, idf, norms, movies_df[dataset_titles == matched_title], mov_df_by_genre, movie_sim_rankings, song_genres)
 
         else:
             # if genre != "select a genre":
@@ -165,6 +174,7 @@ def sql_search(movie, director, genre, popularity, length, song_genres):
                 # genres_of_movies = movies_df['genre']
                 # bool_lst = [genre in lst for lst in genres_of_movies]
 
+                mov_df_by_genre, movie_sim_rankings = insert_movie(mov_df_by_genre, movies_df, mov_df_by_genre)
                 return result_json(df, inverted, idf, norms, mov_df_by_genre, mov_df_by_genre, movie_sim_rankings, song_genres)
 
             else:
@@ -182,16 +192,12 @@ def sql_search(movie, director, genre, popularity, length, song_genres):
                 bool_lst = matched_director[genre].to_list()
 
                 if sum(bool_lst) == 0:
-                    movie_feature_matrix = movie_svd(matched_director, 75)
-                    movie_sim_rankings = movie_feature_cosine_sim(
-                        movie_feature_matrix)
+                    matched_director, movie_sim_rankings = insert_movie(matched_director, movies_df, matched_director)
                     return result_json(df, inverted, idf, norms, matched_director, matched_director, movie_sim_rankings, song_genres)
 
-                movie_feature_matrix = movie_svd(
-                    matched_director[bool_lst], 75)
-                movie_sim_rankings = movie_feature_cosine_sim(
-                    movie_feature_matrix)
-                return result_json(df, inverted, idf, norms, matched_director[bool_lst], matched_director[bool_lst], movie_sim_rankings, song_genres)
+                current_matched_director = matched_director[bool_lst]
+                current_matched_director, movie_sim_rankings = insert_movie(current_matched_director, movies_df, current_matched_director)
+                return result_json(df, inverted, idf, norms, current_matched_director, current_matched_director, movie_sim_rankings, song_genres)
 
             # else:
             #     if director == 'a':
@@ -208,6 +214,7 @@ def sql_search(movie, director, genre, popularity, length, song_genres):
 
     # 3. If the movie has matches:
     else:
+        mov_df_by_genre, movie_sim_rankings = insert_movie(matching_movies, movies_df, mov_df_by_genre)
         return result_json(df, inverted, idf, norms, matching_movies, mov_df_by_genre, movie_sim_rankings, song_genres)
 
 
